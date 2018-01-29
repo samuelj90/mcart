@@ -1,17 +1,16 @@
 export interface MCartOptions {
-    productListing: ProductListingOptions;
+    productListing: ProductListingOptions | null;
     minCart: MiniCartOptions;
     cartPage: CartPageOptions;
     confirmationPage: ConfirmationPageOptions;
 }
 
 export interface ProductListingOptions {
-    enabled: boolean;
     appendElement?: JQuery;
-    template?: string;
+    template?: (product: Product) => string;
     products: Product[]
     addToCartBtnEnabled: boolean;
-    addToCartBtnElementSelector?: string;
+    addToCartBtnElementSelector?: JQuery;
     addToCartBtnClickCallbackFn?: () => void;
     buyNowBtnEnabled: boolean;
     buyNowBtnElementSelector?: string;
@@ -21,7 +20,6 @@ export interface ProductListingOptions {
 }
 
 export interface MiniCartOptions {
-    enabled: boolean;
     template?: string;
     appendElement?: JQuery;
     miniCartViewCartEnabled?: boolean;
@@ -32,8 +30,8 @@ export interface Product {
     title: string;
     description: string;
     price: number;
-    beforeProductAdded?: () => void;
-    afterProductAdded?: () => void;
+    productFeaturedImage: string;
+    productImages: string[];
     additionalFields: any;
 }
 
