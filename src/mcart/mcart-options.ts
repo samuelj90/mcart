@@ -29,11 +29,24 @@ export interface MiniCartOptions {
 }
 
 export interface Product {
-
+    title: string;
+    description: string;
+    price: number;
+    beforeProductAdded?: () => void;
+    afterProductAdded?: () => void;
+    additionalFields: any;
 }
 
 export interface CartPageOptions {
-
+    beforeCartItemIncremented?: () => void;
+    afterCartItemIncremented?: () => void;
+    beforeCartItemDecremented?: () => void;
+    afterCartItemDecremented?: () => void;
+    beforeCheckoutClicked?: () => void;
+    afterCheckoutClicked?: () => void;
+    couponCodeImplementation?: () => void;
+    beforeApplyCouponCode?: () => void;
+    afterCouponCodeApplied?: () => void;
 }
 export interface ConfirmationPageOptions {
 

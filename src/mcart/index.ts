@@ -20,6 +20,15 @@ export class MCart {
    }
 
    private init() {
-      this.rootElement.text(this.options.label);
+    this.initializeProductListing();
+   }
+
+   private initializeProductListing() {
+    if (isNullOrUndefined(this.options.productListing)) {
+        return;
+    }
+    if (this.options.productListing.products.length > 0) {
+        console.log(this.options.productListing.products)
+    }
    }
 }
