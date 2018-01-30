@@ -1,22 +1,10 @@
+import { ProductListingOptions } from "./product-listing/product-listing-options";
 export interface MCartOptions {
     productListing: ProductListingOptions | null;
     minCart: MiniCartOptions;
     cartPage: CartPageOptions;
     confirmationPage: ConfirmationPageOptions;
-}
-
-export interface ProductListingOptions {
-    appendElement?: JQuery;
-    template?: (product: Product) => string;
-    products: Product[]
-    addToCartBtnEnabled: boolean;
-    addToCartBtnElementSelector?: JQuery;
-    addToCartBtnClickCallbackFn?: () => void;
-    buyNowBtnEnabled: boolean;
-    buyNowBtnElementSelector?: string;
-    buyNowBtnClickCallbackFn?: () => void;
-    beforeProductListingCallbackFn?: () => void;
-    afterProductListingCallbackFn?: () => void;
+    isLocalStorageBased: boolean;
 }
 
 export interface MiniCartOptions {
@@ -24,15 +12,6 @@ export interface MiniCartOptions {
     appendElement?: JQuery;
     miniCartViewCartEnabled?: boolean;
     miniCartProceedToCheckout?: boolean;
-}
-
-export interface Product {
-    title: string;
-    description: string;
-    price: number;
-    productFeaturedImage: string;
-    productImages: string[];
-    additionalFields: any;
 }
 
 export interface CartPageOptions {
