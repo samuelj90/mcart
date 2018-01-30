@@ -20,14 +20,19 @@ $(function () {
                 </div>
                 `;
             },
-            addToCartBtnClickCallbackFn: function(event) {
-                console.log(event) 
+            onAddToCartBtnClicked: function(event, product) {
+                console.log('BUY NOW Button Clicked');
+                console.log(event, product) 
             },
-            buyNowBtnClickCallbackFn: function(event) {
+            onBuyNowBtnClicked: function(event) {
+                console.log('ADD TO CART Button Clicked');
                 console.log(event)
             },
-            beforeProductListingCallbackFn: function(productListingOptions) {
-               
+            beforeProductListing: function(productListingOptions) {
+                console.log('Before Product Listing');
+            },
+            afterProductListing: function(productListingOptions) {
+                console.log('After Product Listing');
             },
             replaceAppendElementContents: true,
             addToCartBtnLabel: 'ADD TO CART',

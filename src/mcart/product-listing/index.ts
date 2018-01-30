@@ -15,19 +15,22 @@ export class ProductListing {
             if (isNullOrUndefined(this.productListingOptions.appendElement)) {
                 return;
             }
-            if (!isNullOrUndefined(this.productListingOptions.beforeProductListingCallbackFn)) {
-                this.productListingOptions.beforeProductListingCallbackFn(this.productListingOptions);
+            if (!isNullOrUndefined(this.productListingOptions.beforeProductListing)) {
+                this.productListingOptions.beforeProductListing(this.productListingOptions);
             }
             if (this.productListingOptions.replaceAppendElementContents) {
                 this.productListingOptions.appendElement.html("");
             }
-            this.productListingOptions.products.forEach(product => {
+            this.productListingOptions.products.forEach((product, index, proudcts) => {
                 let template = this.getProductListingTemplate(this.productListingOptions, product);
                 this.productListingOptions.appendElement.append(template);
+                this.productListingOptions.appendElement.find("." + this.productListingOptions.addToCartBtnElementClass + ":last").data("product", product)
+                if (index === (proudcts.length - 1)) {
+                    if (!isNullOrUndefined(this.productListingOptions.afterProductListing)) {
+                        this.productListingOptions.afterProductListing(this.productListingOptions);
+                    }
+                }
             });
-            if (!isNullOrUndefined(this.productListingOptions.afterProductListingCallbackFn)) {
-                this.productListingOptions.afterProductListingCallbackFn(this.productListingOptions);
-            }
         }
     }
     private getProductListingTemplate(productListingOptions: ProductListingOptions, product: Product): string {
@@ -57,10 +60,10 @@ export class ProductListing {
         let addToCartBtnElementSelector: string = "." + productListingOptions.addToCartBtnElementClass;
         let buyNowBtnElementSelector: string = "." + productListingOptions.buyNowBtnElementClass;
         $("body").on("click", addToCartBtnElementSelector, function (event) {
-            productListingOptions.addToCartBtnClickCallbackFn(event);
+            productListingOptions.onAddToCartBtnClicked(event, $(event.target).data("product"));
         });
         $("body").on("click", buyNowBtnElementSelector, function (event) {
-            productListingOptions.buyNowBtnClickCallbackFn(event);
+            productListingOptions.onBuyNowBtnClicked(event);
         });
     }
 }

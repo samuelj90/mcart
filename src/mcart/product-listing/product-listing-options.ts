@@ -8,12 +8,12 @@ export interface ProductListingOptions {
     addToCartBtnEnabled: boolean;
     addToCartBtnLabel: string;
     addToCartBtnElementClass?: string;
-    addToCartBtnClickCallbackFn?: (event) => void;
+    onAddToCartBtnClicked?: (event, product: Product) => void;
     buyNowBtnEnabled: boolean;
     buyNowBtnElementClass?: string;
-    buyNowBtnClickCallbackFn?: (event) => void;
+    onBuyNowBtnClicked?: (event) => void;
     buyNowBtnLabel: string;
     currencyLabel: string;
-    beforeProductListingCallbackFn?: (productListingOptions: ProductListingOptions) => void;
-    afterProductListingCallbackFn?: (productListingOptions: ProductListingOptions) => void;
+    beforeProductListing?: (productListingOptions: ProductListingOptions) => void;
+    afterProductListing?: (productListingOptions: ProductListingOptions) => void;
 }

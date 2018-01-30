@@ -1,4 +1,5 @@
 import { ProductListingOptions } from "./product-listing/product-listing-options";
+import { MiniCartOptions } from "./mini-cart/mini-cart-options";
 export interface MCartOptions {
     productListing: ProductListingOptions | null;
     minCart: MiniCartOptions;
@@ -7,12 +8,6 @@ export interface MCartOptions {
     isLocalStorageBased: boolean;
 }
 
-export interface MiniCartOptions {
-    template?: string;
-    appendElement?: JQuery;
-    miniCartViewCartEnabled?: boolean;
-    miniCartProceedToCheckout?: boolean;
-}
 
 export interface CartPageOptions {
     beforeCartItemIncremented?: () => void;
