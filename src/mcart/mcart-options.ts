@@ -2,7 +2,7 @@ import { ProductListingOptions } from "./product-listing/product-listing-options
 import { MiniCartOptions } from "./mini-cart/mini-cart-options";
 export interface MCartOptions {
     productListing: ProductListingOptions | null;
-    minCart: MiniCartOptions;
+    miniCart: MiniCartOptions;
     cartPage: CartPageOptions;
     confirmationPage: ConfirmationPageOptions;
     isLocalStorageBased: boolean;

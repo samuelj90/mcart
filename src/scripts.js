@@ -1,5 +1,8 @@
 $(function () {
     $("body").mCart({
+        miniCart: {
+            appendElement:$('#minicart-container')
+        },
         productListing: {
             appendElement: $('#product-listing-container'),
             addToCartBtnElementClass: 'add-to-cart-btn',
@@ -21,11 +24,11 @@ $(function () {
                 `;
             },
             onAddToCartBtnClicked: function(event, product) {
-                console.log('BUY NOW Button Clicked');
+                console.log('ADD TO CART Button Clicked');
                 console.log(event, product) 
             },
             onBuyNowBtnClicked: function(event) {
-                console.log('ADD TO CART Button Clicked');
+                console.log('BUY NOW Button Clicked');
                 console.log(event)
             },
             beforeProductListing: function(productListingOptions) {

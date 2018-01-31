@@ -1,9 +1,9 @@
 import { MCartOptions } from "./mcart-options";
 import { isNullOrUndefined } from "./utils";
 import { ProductListing } from "./product-listing";
+import { MiniCart } from "./mini-cart";
 
 export class MCart {
-
     public static NAME: string = "mCart";
     private rootElement: JQuery;
     private options: MCartOptions;
@@ -19,9 +19,14 @@ export class MCart {
 
     private init() {
         this.initializeProductListing();
+        this.initializeMiniCart()
     }
 
     private initializeProductListing() {
         return new ProductListing(this.options.productListing);
     }
+    private initializeMiniCart(): any {
+        return new MiniCart(this.options.miniCart);
+    }
+
 }

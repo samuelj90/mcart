@@ -1,6 +1,7 @@
-import { Product } from "src/mcart/product-listing/product";
+import { Product } from "./product";
 import { ProductListingOptions } from "./product-listing-options";
 import { isNullOrUndefined } from "util";
+import { Cart } from "../cart/cart";
 
 export class ProductListing {
     constructor(private productListingOptions: ProductListingOptions) {
@@ -60,7 +61,10 @@ export class ProductListing {
         let addToCartBtnElementSelector: string = "." + productListingOptions.addToCartBtnElementClass;
         let buyNowBtnElementSelector: string = "." + productListingOptions.buyNowBtnElementClass;
         $("body").on("click", addToCartBtnElementSelector, function (event) {
-            productListingOptions.onAddToCartBtnClicked(event, $(event.target).data("product"));
+            const product: Product = $(event.target).data("product");
+            Cart.insertProductToCart(product, 1);
+            productListingOptions.onAddToCartBtnClicked(event, product);
+
         });
         $("body").on("click", buyNowBtnElementSelector, function (event) {
             productListingOptions.onBuyNowBtnClicked(event);
