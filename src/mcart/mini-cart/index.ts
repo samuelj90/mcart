@@ -1,6 +1,6 @@
 import { MiniCartOptions } from "./mini-cart-options";
 import { isNullOrUndefined } from "../utils";
-import { Cart } from "../cart/cart";
+import { Cart } from "../cart";
 import { CartItem } from "../cart/cart-item";
 import { Observable } from "rxjs/Observable";
 export class MiniCart extends Cart {
@@ -10,7 +10,7 @@ export class MiniCart extends Cart {
     constructor(private miniCartOptions: MiniCartOptions) {
         super();
         if (isNullOrUndefined(miniCartOptions)) {
-            throw new Error("miniCartOptions may not be empty!");
+            return;
         }
         this.cartItemObservable = this.getCartItemsSubject().asObservable();
         this.initializeMiniCart();
@@ -18,13 +18,14 @@ export class MiniCart extends Cart {
         const self = this;
             behaviourSubject.subscribe(
                 function(cartItems: CartItem[]) {
+                    console.debug("cartItems >> ", cartItems)
                     self.renderMiniCartItems(miniCartOptions, cartItems);
                 },
                 function(error) {
                     console.log("Error", error);
                 },
                 function() {
-                    console.log("Completed");
+                    console.debug("Completed");
                 }
             );
             console.log(behaviourSubject.observers);

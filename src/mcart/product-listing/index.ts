@@ -1,70 +1,52 @@
+import { ProductListingTemplateOptions } from "./product-listing-template-options";
 import { Product } from "./product";
 import { ProductListingOptions } from "./product-listing-options";
 import { isNullOrUndefined } from "util";
-import { Cart } from "../cart/cart";
+import { Cart } from "../cart";
+import { defaultProductListingOptions } from "./default-product-listing-options";
 
 export class ProductListing {
     constructor(private productListingOptions: ProductListingOptions) {
         if (isNullOrUndefined(productListingOptions)) {
-            throw new Error("productListing may not be empty!");
+            return;
         }
-        this.initializeProductListing();
-        this.initializeProductListingEventListeners(productListingOptions);
+        const defaultProductListingOptions: ProductListingOptions = this.getDefaulatTemplateListingOptions();
+        const combainedProductListingOptions = $.extend({}, defaultProductListingOptions, productListingOptions);
+        this.initializeProductListing(combainedProductListingOptions);
+        this.initializeProductListingEventListeners(combainedProductListingOptions);
     }
-    public initializeProductListing(): void {
-        if (this.productListingOptions.products.length > 0) {
-            if (isNullOrUndefined(this.productListingOptions.appendElement)) {
-                return;
-            }
-            if (!isNullOrUndefined(this.productListingOptions.beforeProductListing)) {
-                this.productListingOptions.beforeProductListing(this.productListingOptions);
-            }
-            if (this.productListingOptions.replaceAppendElementContents) {
-                this.productListingOptions.appendElement.html("");
-            }
-            this.productListingOptions.products.forEach((product, index, proudcts) => {
-                let template = this.getProductListingTemplate(this.productListingOptions, product);
-                this.productListingOptions.appendElement.append(template);
-                this.productListingOptions.appendElement.find("." + this.productListingOptions.addToCartBtnElementClass + ":last").data("product", product)
-                if (index === (proudcts.length - 1)) {
-                    if (!isNullOrUndefined(this.productListingOptions.afterProductListing)) {
-                        this.productListingOptions.afterProductListing(this.productListingOptions);
-                    }
+    private getDefaulatTemplateListingOptions(): ProductListingOptions {
+        return defaultProductListingOptions
+    }
+
+    public initializeProductListing(productListingOptions: ProductListingOptions): void {
+        if (!isNullOrUndefined(productListingOptions.beforeProductListing)) {
+            productListingOptions.beforeProductListing(productListingOptions);
+        }
+        if (productListingOptions.replaceRenderToContents) {
+            productListingOptions.renderTo.html("");
+        }
+        productListingOptions.products.forEach((product, index, proudcts) => {
+            let templateOptions = productListingOptions.templateOptions;
+            let template = templateOptions.template(templateOptions, product);
+            productListingOptions.renderTo.append(template);
+            productListingOptions.renderTo.find("." + productListingOptions.templateOptions.addToCartBtnElementClass + ":last").data("product", product)
+            if (index === (proudcts.length - 1)) {
+                if (!isNullOrUndefined(productListingOptions.afterProductListing)) {
+                    productListingOptions.afterProductListing(productListingOptions);
                 }
-            });
-        }
+            }
+        });
     }
-    private getProductListingTemplate(productListingOptions: ProductListingOptions, product: Product): string {
-        let templateString;
-        // TODO : Fix options that will display undefined
-        if (isNullOrUndefined(productListingOptions.template)) {
-            templateString = `
-            <div class="product">
-                <div class="wrapper">
-                    <div class="image">
-                        <img src="${product.featuredImage}">
-                    </div>
-                    <span class="price">  ${product.price}</span>
-                    <h5> ${product.title} </h5>
-                    <p>${product.description}</p>
-                    <button class="${productListingOptions.addToCartBtnElementClass}">${productListingOptions.addToCartBtnLabel}</button>
-                    <button class="${productListingOptions.buyNowBtnElementClass}">${productListingOptions.buyNowBtnLabel}</button>
-                </div>
-            </div>
-            `;
-        } else {
-            templateString = productListingOptions.template(productListingOptions, product);
-        }
-        return templateString;
-    }
+
     private initializeProductListingEventListeners(productListingOptions: ProductListingOptions): void {
-        let addToCartBtnElementSelector: string = "." + productListingOptions.addToCartBtnElementClass;
-        let buyNowBtnElementSelector: string = "." + productListingOptions.buyNowBtnElementClass;
+        const productListingTemplateOptions = productListingOptions.templateOptions;
+        let addToCartBtnElementSelector: string = "." + productListingTemplateOptions.addToCartBtnElementClass;
+        let buyNowBtnElementSelector: string = "." + productListingTemplateOptions.buyNowBtnElementClass;
         $("body").on("click", addToCartBtnElementSelector, function (event) {
             const product: Product = $(event.target).data("product");
             Cart.insertProductToCart(product, 1);
             productListingOptions.onAddToCartBtnClicked(event, product);
-
         });
         $("body").on("click", buyNowBtnElementSelector, function (event) {
             productListingOptions.onBuyNowBtnClicked(event);
