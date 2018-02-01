@@ -1,16 +1,11 @@
 import { CartItem } from "../cart/cart-item";
+import { MiniCartTemplateOptions } from "./mini-cart-template-options";
 
 export interface MiniCartOptions {
-    linkBtnId: string;
-    onLinkBtnClicked: () => void;
-    template: (miniCartOptions: MiniCartOptions, cartItemsCount: number) => string;
-    cartItemTemplate: (miniCartOptions: MiniCartOptions, cartItem: CartItem, index: number, cartItems: CartItem[]) => string;
-    appendElement?: JQuery;
-    linkBtnCounterSelector: string;
-    viewCartBtnEnabled?: boolean;
-    viewCartBtnClass?: string;
-    onViewCartBtnClicked: () => void;
-    proceedToCheckoutEnabled?: boolean;
-    proceedToCheckoutBtnClass?: string;
-    onProceedToCheckoutBtnClicked: () => void;
+    renderTo?: JQuery;
+    replaceRenderToContents: boolean,
+    templateOptions: MiniCartTemplateOptions
+    onLinkBtnClicked?: () => void;
+    onViewCartBtnClicked?: () => void;
+    onProceedToCheckoutBtnClicked?: () => void;
 }

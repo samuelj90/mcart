@@ -1,7 +1,7 @@
 $(function () {
     $("body").mCart({
         miniCart: {
-            appendElement: $('#minicart-container')
+            renderTo: $('#minicart-container')
         },
         productListing: {
             renderTo: $('#product-listing-container'),

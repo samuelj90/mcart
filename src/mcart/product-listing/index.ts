@@ -10,13 +10,9 @@ export class ProductListing {
         if (isNullOrUndefined(productListingOptions)) {
             return;
         }
-        const defaultProductListingOptions: ProductListingOptions = this.getDefaulatTemplateListingOptions();
         const combainedProductListingOptions = $.extend({}, defaultProductListingOptions, productListingOptions);
         this.initializeProductListing(combainedProductListingOptions);
         this.initializeProductListingEventListeners(combainedProductListingOptions);
-    }
-    private getDefaulatTemplateListingOptions(): ProductListingOptions {
-        return defaultProductListingOptions
     }
 
     public initializeProductListing(productListingOptions: ProductListingOptions): void {
