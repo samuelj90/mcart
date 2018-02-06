@@ -8,4 +8,5 @@ export interface MiniCartOptions {
     onLinkBtnClicked?: () => void;
     onViewCartBtnClicked?: () => void;
     onProceedToCheckoutBtnClicked?: () => void;
+    onCartItemRemoveBtnClicked?: () => void;
 }

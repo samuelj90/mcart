@@ -17,11 +17,15 @@ const miniCartOptions: MiniCartOptions = {
         "prependCurrency": true,
         "quantityLabel": "Qty",
         "cartItemsContainerId": "mcart-minicart-cartitems-container",
+        "removeItemFromCartBtnElementClass": "mcart-minicart-removeitem-from-cart",
         "template": function (miniCartTemplateOptions: MiniCartTemplateOptions, cartItemsCount: number) {
             return `
-            <div class="mcart-minicart-wrpper">
+            <div class="mcart-minicart">
                 <a id="${miniCartTemplateOptions.linkBtnId}" href="#">
-                <span id="${miniCartTemplateOptions.linkBtnCounterElementId}">${cartItemsCount}</span> Items in Cart
+                <span id="${miniCartTemplateOptions.linkBtnCounterElementId}">${cartItemsCount}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24">
+                <path d="M10 19.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5zm3.5-1.5c-.828 0-1.5.671-1.5 1.5s.672 1.5 1.5 1.5 1.5-.671 1.5-1.5c0-.828-.672-1.5-1.5-1.5zm1.336-5l1.977-7h-16.813l2.938 7h11.898zm4.969-10l-3.432 12h-12.597l.839 2h13.239l3.474-12h1.929l.743-2h-4.195z"/>
+                </svg>
                 </a>
                 <div id="${miniCartTemplateOptions.cartItemsContainerId}">
                     No Items in cart
@@ -31,13 +35,15 @@ const miniCartOptions: MiniCartOptions = {
         },
         "cartItemTemplate": function (miniCartTemplateOptions: MiniCartTemplateOptions, cartItem: CartItem, index: number, cartItems: CartItem[]) {
             return `
-                    <div class="mcart-minicart-cart-item clearfix">
-                        <div class="mcart-minicart-image col-md-3"> <img src="${cartItem.item.featuredImage}" alt="" /> </div>
-                        <div class="mcart-minicart-content mcart-minicart-content1 col-md-9">
-                            <h4 class="mcart-minicart-title"><a href="#">${cartItem.title}</a></h4>
-                            <span class="mcart-minicart-price">${cartItem.item.price}</span>
+                    <div class="mcart-minicart-cart-item">
+                        <div class="mcart-minicart-image"> <img src="${cartItem.item.featuredImage}" alt="" /> </div>
+                        <div class="mcart-minicart-content">
+                            <h4 class="mcart-minicart-title">
+                            <a href="#">${cartItem.title}</a>
+                            </h4>
+                            <span class="mcart-minicart-price">${cartItem.item.currency} ${cartItem.item.price}</span>
                             <span class="mcart-minicart-quantity">${miniCartTemplateOptions.quantityLabel} : ${cartItem.quantity}</span>
-                            <span class="mcart-minicart-remove mcart-minicart-remove">X</span>
+                            <span class="${miniCartTemplateOptions.removeItemFromCartBtnElementClass}">X</span>
                         </div>
                     </div>
                 `;

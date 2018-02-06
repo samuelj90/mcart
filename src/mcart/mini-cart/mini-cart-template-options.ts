@@ -12,6 +12,7 @@ export interface MiniCartTemplateOptions {
     prependCurrency: boolean;
     quantityLabel: string;
     cartItemsContainerId: string;
+    removeItemFromCartBtnElementClass: string;
     template?: (miniCartTemplateOptions: MiniCartTemplateOptions, cartItemsCount: number) => string;
     cartItemTemplate?: (miniCartOptions: MiniCartTemplateOptions, cartItem: CartItem, index: number, cartItems: CartItem[]) => string;
 }

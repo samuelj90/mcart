@@ -1,4 +1,4 @@
-import { MiniCartOptions } from "./mini-cart-options";
+import { MiniCartOptions} from "./mini-cart-options";
 import { isNullOrUndefined } from "../utils";
 import { Cart } from "../cart";
 import { CartItem } from "../cart/cart-item";
@@ -20,6 +20,7 @@ export class MiniCart extends Cart {
             function (cartItems: CartItem[]) {
                 console.debug("cartItems >> ", cartItems)
                 self.renderMiniCartItems(miniCartOptions, cartItems);
+                self.updateCartItemsCounter(miniCartOptions, cartItems);
             },
             function (error) {
                 console.log("Error", error);
@@ -28,6 +29,7 @@ export class MiniCart extends Cart {
                 console.debug("Completed");
             }
         );
+        this.initializeEventListerners(miniCartOptions);
         console.log(behaviourSubject.observers);
     }
 
@@ -47,7 +49,39 @@ export class MiniCart extends Cart {
         cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
             let template = templateOptions.cartItemTemplate(templateOptions, cartItem, index, cartItems);
             cartItemsContainer.append(template)
+            cartItemsContainer.find("." + templateOptions.removeItemFromCartBtnElementClass + ":last").data("cartitem", cartItem)
         });
     }
+    private updateCartItemsCounter(miniCartOptions: MiniCartOptions, cartItems: CartItem[]): void {
+        let templateOptions = miniCartOptions.templateOptions;
+        let linkBtnCounter = $("#" + templateOptions.linkBtnCounterElementId);
+        linkBtnCounter.html("" + cartItems.length);
+    }
+    private initializeEventListerners(miniCartOptions: MiniCartOptions): void {
+        let templateOptions = miniCartOptions.templateOptions;
+        let cartItemsContainer = $("#" + templateOptions.cartItemsContainerId);
+        $("body").on("click", ("#" + templateOptions.linkBtnId), function(){
+            console.debug("#" + templateOptions.linkBtnId + " clicked")
+            cartItemsContainer.slideToggle( "fast", function() {
+                console.debug("cartItemsContainer slide toggled");
+            });
+            if (!isNullOrUndefined(miniCartOptions.onLinkBtnClicked)) {
+                miniCartOptions.onLinkBtnClicked();
+            }
+        });
+        $("body").on("click", ("." + templateOptions.removeItemFromCartBtnElementClass), function(){
+            console.debug("#" + templateOptions.linkBtnId + " clicked")
+            let cartItem: CartItem = $(this).data("cartitem")
+            /*
+            cartItemsContainer.slideToggle( "fast", function() {
+                console.debug("cartItemsContainer slide toggled");
+            });
+            */
+            if (!isNullOrUndefined(miniCartOptions.onCartItemRemoveBtnClicked)) {
+                miniCartOptions.onCartItemRemoveBtnClicked();
+            }
+        });
+    }
+
     // TODO create observer subscriber pattern for linkBtn CartItemsCount
 }

@@ -1,7 +1,8 @@
 $(function () {
     $("body").mCart({
         miniCart: {
-            renderTo: $('#minicart-container')
+            renderTo: $('#minicart-container'),
+            replaceRenderToContents: true
         },
         productListing: {
             renderTo: $('#product-listing-container'),
