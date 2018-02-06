@@ -18,6 +18,9 @@ const miniCartOptions: MiniCartOptions = {
         "quantityLabel": "Qty",
         "cartItemsContainerId": "mcart-minicart-cartitems-container",
         "removeItemFromCartBtnElementClass": "mcart-minicart-removeitem-from-cart",
+        "cartItemsFooterId": "mcart-minicart-cartitems-footer",
+        "cartItemsSubTotalContainerId": "mcart-minicart-cartitems-subtotal",
+        "cartItemsSubTotalLabel": "Sub Total  : ",
         "template": function (miniCartTemplateOptions: MiniCartTemplateOptions, cartItemsCount: number) {
             return `
             <div class="mcart-minicart">
@@ -30,6 +33,15 @@ const miniCartOptions: MiniCartOptions = {
                 <div id="${miniCartTemplateOptions.cartItemsContainerId}">
                     No Items in cart
                 </div>
+            </div>
+            `;
+        },
+        "cartItemsFooterTemplate": function (miniCartTemplateOptions: MiniCartTemplateOptions, subTotal: number = 0) {
+            return `
+            <div id="${miniCartTemplateOptions.cartItemsFooterId}">
+            <div id="${miniCartTemplateOptions.cartItemsSubTotalContainerId}"><span class="label">${miniCartTemplateOptions.cartItemsSubTotalLabel}</span><span class="value">${subTotal}</span></div>
+                <button id="${miniCartTemplateOptions.viewCartBtnId}">${miniCartTemplateOptions.viewCartBtnLabel}</button>
+                <button id="${miniCartTemplateOptions.proceedToCheckoutBtnId}">${miniCartTemplateOptions.proceedToCheckoutBtnLabel}</button>
             </div>
             `;
         },

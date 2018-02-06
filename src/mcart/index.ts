@@ -2,6 +2,7 @@ import { MCartOptions } from "./mcart-options";
 import { isNullOrUndefined } from "./utils";
 import { ProductListing } from "./product-listing";
 import { MiniCart } from "./mini-cart";
+import { Cart } from "./cart";
 
 export class MCart {
     public static NAME: string = "mCart";
@@ -19,6 +20,7 @@ export class MCart {
 
     private init() {
         this.initializeProductListing();
+        Cart.enableLocalSyncing();
         this.initializeMiniCart()
     }
 

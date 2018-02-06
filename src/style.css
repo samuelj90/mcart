@@ -140,3 +140,13 @@ div.product .wrapper img {
     color: #FFF;
     text-align: center;
 }
+#mcart-minicart-cartitems-footer,
+#mcart-minicart-cartitems-subtotal{
+	display: block;
+	clear: both;
+	width: 100%;
+	float: none;
+}
+#mcart-minicart-cartitems-footer {
+	padding:15px;
+}

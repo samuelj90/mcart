@@ -2,6 +2,8 @@ import { CartItem } from "./cart-item";
 import { Product } from "../product-listing/product";
 import { BehaviorSubject } from "rxjs"
 import { CANCELLED } from "dns";
+import { error } from "util";
+import { isNullOrUndefined } from "../utils";
 export class Cart {
     private static remoteSyncingURLs: any;
     private static remoteSyncingEnabled: boolean;
@@ -16,21 +18,25 @@ export class Cart {
         Cart.cartItems = [];
         if (Cart.localSyncingEnabled) {
             Cart.cartItems = Cart.retriveCartItemsFromStorage();
+            if (isNullOrUndefined(Cart.cartItems)) {
+                Cart.cartItems = [];
+            }
         }
         Cart.cartItemsSubject = new BehaviorSubject(Cart.cartItems);
         // otherwise initialize cartItems as an empty array
     }
+    public static upateBehaviourSubjectAndSyncing() {
+        Cart.cartItemsSubject.next(Cart.cartItems);
+        // if localSyncingEnabled
+        if (Cart.localSyncingEnabled) {
+            Cart.saveCartItemsIntoStorage();
+        }
+    }
     public static insertProductToCart(product: Product, count: number = 1) {
         // TODO insert a product into cart
         console.log(Cart.cartItems);
-        if (typeof Cart.cartItems === "undefined") {
+        if (isNullOrUndefined(Cart.cartItems)) {
             Cart.initializeCart();
-            const cartItem: CartItem = {
-                title: product.title,
-                item: product,
-                quantity: count
-            }
-            this.cartItems.push(cartItem);
         } else {
             const isItemExist: boolean = Cart.cartItems.map((value: CartItem, index: number, cartItems: CartItem[]) => {
                 if (value.title === product.title ) {
@@ -39,28 +45,28 @@ export class Cart {
                 }
                 return false
             }).reduce(function(pre, cur) {return pre || cur}, false);
-            if (!isItemExist) {
-                const cartItem: CartItem = {
-                    title: product.title,
-                    item: product,
-                    quantity: count
-                }
-                Cart.cartItems.push(cartItem);
+            if (isItemExist) {
+                Cart.upateBehaviourSubjectAndSyncing();
+                return;
             }
         }
+        const cartItem: CartItem = {
+            title: product.title,
+            item: product,
+            quantity: count
+        }
+        this.cartItems.push(cartItem);
+        Cart.upateBehaviourSubjectAndSyncing();
+    }
+    public static removeCartItemFromCart(cartItem: CartItem) {
+        Cart.cartItems = Cart.cartItems.filter(value => value !== cartItem);
         Cart.cartItemsSubject.next(Cart.cartItems);
         // if localSyncingEnabled
         if (Cart.localSyncingEnabled) {
             Cart.saveCartItemsIntoStorage();
         }
     }
-    public static removeProductFromCart(product: Product, count: number) {
-        // TODO remove a product from cart
-
-        // if localSyncingEnabled
-        if (Cart.localSyncingEnabled) {
-            Cart.saveCartItemsIntoStorage();
-        }
+    public static removeProductFromCart(product: Product, count: number = -1) {
     }
     private static retriveCartItemsFromStorage(): CartItem[] {
         // if remoteSyncingEnabled
@@ -76,6 +82,7 @@ export class Cart {
         // if localSyncingEnabled
         if (Cart.localSyncingEnabled) {
             // save cartItems into Local storage
+            localStorage.setItem("cartItems", JSON.stringify(Cart.cartItems));
         }
         // if remoteSyncingEnabled
         if (Cart.remoteSyncingEnabled) {

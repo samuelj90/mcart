@@ -46,11 +46,15 @@ export class MiniCart extends Cart {
         let templateOptions = miniCartOptions.templateOptions;
         let cartItemsContainer  = $("#" + templateOptions.cartItemsContainerId);
         cartItemsContainer.html("");
+        let subTotal = 0;
         cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
+            subTotal = subTotal + (cartItem.quantity * cartItem.item.price);
             let template = templateOptions.cartItemTemplate(templateOptions, cartItem, index, cartItems);
             cartItemsContainer.append(template)
             cartItemsContainer.find("." + templateOptions.removeItemFromCartBtnElementClass + ":last").data("cartitem", cartItem)
         });
+        let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, subTotal);
+        cartItemsContainer.append(cartItemsFooterTemplate);
     }
     private updateCartItemsCounter(miniCartOptions: MiniCartOptions, cartItems: CartItem[]): void {
         let templateOptions = miniCartOptions.templateOptions;
@@ -77,6 +81,7 @@ export class MiniCart extends Cart {
                 console.debug("cartItemsContainer slide toggled");
             });
             */
+            Cart.removeCartItemFromCart(cartItem);
             if (!isNullOrUndefined(miniCartOptions.onCartItemRemoveBtnClicked)) {
                 miniCartOptions.onCartItemRemoveBtnClicked();
             }
