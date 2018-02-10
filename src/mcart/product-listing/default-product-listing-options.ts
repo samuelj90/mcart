@@ -1,6 +1,6 @@
 import { ProductListingOptions } from "./product-listing-options";
 const productListingOptions: ProductListingOptions = {
-    "renderTo": $("body"),
+    "renderTo": jQuery("body"),
     "replaceRenderToContents": false,
     "templateOptions": {
         "template": function (productListingTemplateOptions, product) {

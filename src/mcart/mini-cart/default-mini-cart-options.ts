@@ -3,7 +3,7 @@ import { MiniCartTemplateOptions } from "./mini-cart-template-options";
 import { CartItem } from "../cart/cart-item";
 
 const miniCartOptions: MiniCartOptions = {
-    "renderTo": $("body"),
+    "renderTo": jQuery("body"),
     "replaceRenderToContents": false,
     "templateOptions": {
         "linkBtnCounterElementId": "mcart-mini-cart-cartitems-counter",
