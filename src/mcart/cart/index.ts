@@ -59,7 +59,7 @@ export class Cart {
         Cart.upateBehaviourSubjectAndSyncing();
     }
     public static removeCartItemFromCart(cartItem: CartItem) {
-        Cart.cartItems = Cart.cartItems.filter(value => value !== cartItem);
+        Cart.cartItems = Cart.cartItems.filter(value => value.title !== cartItem.title);
         Cart.cartItemsSubject.next(Cart.cartItems);
         // if localSyncingEnabled
         if (Cart.localSyncingEnabled) {

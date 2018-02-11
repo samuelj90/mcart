@@ -59,8 +59,12 @@ const miniCartOptions: MiniCartOptions = {
                         </div>
                     </div>
                 `;
-        }
+        },
     },
+    "overideOnLinkBtnClicked": false,
+    "overideOnViewCartBtnClicked": false,
+    "overideOnProceedToCheckoutBtnClicked": false,
+    "overideOnCartItemRemoveBtnClicked": false
 }
 
 export const defaultMiniCartOptions = miniCartOptions;
