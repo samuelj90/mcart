@@ -1,25 +1,11 @@
 import { ProductListingOptions } from "./product-listing/product-listing-options";
 import { MiniCartOptions } from "./mini-cart/mini-cart-options";
+import { CartPageOptions } from "./cart-page/cart-page-options";
+import { ConfirmationPageOptions } from "./confirmation-page/confirmation-page-options";
 export interface MCartOptions {
     productListing: ProductListingOptions | null;
     miniCart: MiniCartOptions;
     cartPage: CartPageOptions;
     confirmationPage: ConfirmationPageOptions;
     isLocalStorageBased: boolean;
-}
-
-
-export interface CartPageOptions {
-    beforeCartItemIncremented?: () => void;
-    afterCartItemIncremented?: () => void;
-    beforeCartItemDecremented?: () => void;
-    afterCartItemDecremented?: () => void;
-    beforeCheckoutClicked?: () => void;
-    afterCheckoutClicked?: () => void;
-    couponCodeImplementation?: () => void;
-    beforeApplyCouponCode?: () => void;
-    afterCouponCodeApplied?: () => void;
-}
-export interface ConfirmationPageOptions {
-
 }

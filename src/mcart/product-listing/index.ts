@@ -42,10 +42,14 @@ export class ProductListing {
         $("body").on("click", addToCartBtnElementSelector, function (event) {
             const product: Product = $(event.target).data("product");
             Cart.insertProductToCart(product, 1);
-            productListingOptions.onAddToCartBtnClicked(event, product);
+            if (!isNullOrUndefined(productListingOptions.onAddToCartBtnClicked)) {
+                productListingOptions.onAddToCartBtnClicked(event, product);
+            }
         });
         $("body").on("click", buyNowBtnElementSelector, function (event) {
-            productListingOptions.onBuyNowBtnClicked(event);
+            if (!isNullOrUndefined(productListingOptions.onBuyNowBtnClicked)) {
+                productListingOptions.onBuyNowBtnClicked(event);
+            }
         });
     }
 }
