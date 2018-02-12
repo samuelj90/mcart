@@ -4,6 +4,7 @@ import { BehaviorSubject } from "rxjs"
 import { CANCELLED } from "dns";
 import { error } from "util";
 import { isNullOrUndefined } from "../utils";
+import { CartOptions } from "./cart-options";
 export class Cart {
     private static remoteSyncingURLs: any;
     private static remoteSyncingEnabled: boolean;

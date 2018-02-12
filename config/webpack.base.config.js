@@ -66,7 +66,8 @@ module.exports = function (env) {
             new CopyWebpackPlugin([
                 {from: './node_modules/jquery/dist/jquery.js', to: './lib/jquery.js'},
                 {from: './src/scripts.js', to: './lib/scripts.js'},
-                {from: './src/style.css', to: './lib/style.css'}
+                {from: './src/style.css', to: './lib/style.css'},
+                {from: './src/proudcts.json', to: './lib/proudcts.json'}
             ]),
 
             // insert bundled script and metadata into index.html

@@ -12,7 +12,6 @@ export class ProductListing {
         }
         const combainedProductListingOptions = $.extend({}, defaultProductListingOptions, productListingOptions);
         this.initializeProductListing(combainedProductListingOptions);
-        this.initializeProductListingEventListeners(combainedProductListingOptions);
     }
 
     public initializeProductListing(productListingOptions: ProductListingOptions): void {
@@ -22,6 +21,20 @@ export class ProductListing {
         if (productListingOptions.replaceRenderToContents) {
             productListingOptions.renderTo.html("");
         }
+        if (isNullOrUndefined(productListingOptions.products)) {
+            $.get(
+                productListingOptions.endpoints.getProducts,
+                (data: any, textStatus: string, jqXHR: JQueryXHR) => {
+                    productListingOptions.products = data;
+                    this.renderProductListing(productListingOptions);
+                }
+            );
+        } else {
+            this.renderProductListing(productListingOptions);
+        }
+    }
+
+    private renderProductListing(productListingOptions: ProductListingOptions) {
         productListingOptions.products.forEach((product, index, proudcts) => {
             let templateOptions = productListingOptions.templateOptions;
             let template = templateOptions.template(templateOptions, product);
@@ -30,6 +43,7 @@ export class ProductListing {
             if (index === (proudcts.length - 1)) {
                 if (!isNullOrUndefined(productListingOptions.afterProductListing)) {
                     productListingOptions.afterProductListing(productListingOptions);
+                    this.initializeProductListingEventListeners(productListingOptions);
                 }
             }
         });

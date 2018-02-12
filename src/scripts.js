@@ -7,6 +7,9 @@ $(function () {
         productListing: {
             renderTo: $('#product-listing-container'),
             replaceRenderToContents: true,
+            endpoints : {
+                getProducts: "/lib/proudcts.json"
+            },
             templateOptions: {
                 template: function (productListingTemplateOptions, product) {
                     let priceAppendLabel = product.currency,
