@@ -16,6 +16,7 @@ export interface MiniCartTemplateOptions {
     cartItemsFooterId: string;
     cartItemsSubTotalContainerId: string;
     cartItemsSubTotalLabel: string;
+    displayCarQtyInlinkBtnCounter: boolean;
     template?: (miniCartTemplateOptions: MiniCartTemplateOptions, cartItemsCount: number) => string;
     cartItemsFooterTemplate?: (miniCartTemplateOptions: MiniCartTemplateOptions, subTotal: number) => string;
     cartItemTemplate?: (miniCartOptions: MiniCartTemplateOptions, cartItem: CartItem, index: number, cartItems: CartItem[]) => string;

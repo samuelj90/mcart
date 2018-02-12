@@ -18,17 +18,22 @@ export class MCart {
         this.init();
     }
 
-    private init() {
+    private init(): void {
         this.initializeProductListing();
-        Cart.enableLocalSyncing();
-        this.initializeMiniCart()
+        this.initializeCart()
+        this.initializeMiniCart();
     }
 
-    private initializeProductListing() {
-        return new ProductListing(this.options.productListing);
+    private initializeProductListing(): void  {
+        new ProductListing(this.options.productListing);
     }
-    private initializeMiniCart(): any {
-        return new MiniCart(this.options.miniCart);
+
+    private initializeCart(): void  {
+        new Cart(this.options.cart)
+    }
+
+    private initializeMiniCart(): void  {
+        new MiniCart(this.options.miniCart);
     }
 
 }

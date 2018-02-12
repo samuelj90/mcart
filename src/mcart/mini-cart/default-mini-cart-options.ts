@@ -21,6 +21,7 @@ const miniCartOptions: MiniCartOptions = {
         "cartItemsFooterId": "mcart-minicart-cartitems-footer",
         "cartItemsSubTotalContainerId": "mcart-minicart-cartitems-subtotal",
         "cartItemsSubTotalLabel": "Sub Total  : ",
+        "displayCarQtyInlinkBtnCounter": true,
         "template": function (miniCartTemplateOptions: MiniCartTemplateOptions, cartItemsCount: number) {
             return `
             <div class="mcart-minicart">

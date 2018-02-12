@@ -1,5 +1,8 @@
 $(function () {
     $("body").mCart({
+        cart: {
+
+        },
         miniCart: {
             renderTo: $('#minicart-container'),
             replaceRenderToContents: true

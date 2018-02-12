@@ -1,8 +1,8 @@
 export interface CartOptions {
-    isLocalSyncingEnabled: boolean,
-    isRemoteSyncingEnabled: boolean,
+    localSyncingEnabled: boolean,
+    remoteSyncingEnabled: boolean,
     endpoints?: {
         getCartItems: string,
-        addToCart: string,
+        addItemToCart: string,
     }
 }

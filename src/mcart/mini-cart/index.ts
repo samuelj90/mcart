@@ -20,7 +20,6 @@ export class MiniCart extends Cart {
             function (cartItems: CartItem[]) {
                 console.debug("cartItems >> ", cartItems)
                 self.renderMiniCartItems(miniCartOptions, cartItems);
-                self.updateCartItemsCounter(miniCartOptions, cartItems);
             },
             function (error) {
                 console.log("Error", error);
@@ -46,20 +45,21 @@ export class MiniCart extends Cart {
         let templateOptions = miniCartOptions.templateOptions;
         let cartItemsContainer  = $("#" + templateOptions.cartItemsContainerId);
         cartItemsContainer.html("");
-        let subTotal = 0;
+        let subTotal = 0, cartItemTotalQty = 0;
         cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
             subTotal = subTotal + (cartItem.quantity * cartItem.item.price);
+            cartItemTotalQty = cartItemTotalQty + cartItem.quantity;
             let template = templateOptions.cartItemTemplate(templateOptions, cartItem, index, cartItems);
             cartItemsContainer.append(template)
             cartItemsContainer.find("." + templateOptions.removeItemFromCartBtnElementClass + ":last").data("cartitem", cartItem)
         });
         let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, subTotal);
         cartItemsContainer.append(cartItemsFooterTemplate);
-    }
-    private updateCartItemsCounter(miniCartOptions: MiniCartOptions, cartItems: CartItem[]): void {
-        let templateOptions = miniCartOptions.templateOptions;
-        let linkBtnCounter = $("#" + templateOptions.linkBtnCounterElementId);
-        linkBtnCounter.html("" + cartItems.length);
+        if (templateOptions.displayCarQtyInlinkBtnCounter) {
+            miniCartOptions.renderTo.find("#" + templateOptions.linkBtnCounterElementId).html("" +  cartItemTotalQty);
+        } else {
+            miniCartOptions.renderTo.find("#" + templateOptions.linkBtnCounterElementId).html("" + cartItems.length);
+        }
     }
     private initializeEventListerners(miniCartOptions: MiniCartOptions): void {
         let templateOptions = miniCartOptions.templateOptions;
