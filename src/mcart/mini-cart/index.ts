@@ -12,6 +12,9 @@ export class MiniCart extends Cart {
         if (isNullOrUndefined(miniCartOptions)) {
             return;
         }
+        if (miniCartOptions.renderTo.length <= 0) {
+            return;
+        }
         miniCartOptions = $.extend({}, defaultMiniCartOptions, miniCartOptions);
         this.initializeMiniCart(miniCartOptions);
         const behaviourSubject = this.getCartItemsSubject();
@@ -85,7 +88,12 @@ export class MiniCart extends Cart {
                 miniCartOptions.onCartItemRemoveBtnClicked(miniCartOptions, cartItem);
             }
         });
-        $("body").on("click", ("#" + templateOptions.proceedToCheckoutBtnId), function(){
+        $("body").find("#" + templateOptions.cartItemsContainerId).on("click", ("#" + templateOptions.viewCartBtnId), function(){
+            if (!isNullOrUndefined(miniCartOptions.onViewCartBtnClicked)) {
+                miniCartOptions.onViewCartBtnClicked(miniCartOptions);
+            }
+        });
+        $("body").find("#" + templateOptions.cartItemsContainerId).on("click", ("#" + templateOptions.proceedToCheckoutBtnId), function(){
             if (!isNullOrUndefined(miniCartOptions.onProceedToCheckoutBtnClicked)) {
                 miniCartOptions.onProceedToCheckoutBtnClicked(miniCartOptions);
             }

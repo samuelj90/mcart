@@ -11,6 +11,9 @@ export class CartPage extends Cart {
         if (isNullOrUndefined(cartPageOptions)) {
             return;
         }
+        if (cartPageOptions.renderTo.length <= 0) {
+            return;
+        }
         cartPageOptions = $.extend({}, defaultCartPageOptions, cartPageOptions);
         this.initializeCartPage(cartPageOptions);
         const behaviourSubject = this.getCartItemsSubject();
@@ -39,9 +42,26 @@ export class CartPage extends Cart {
         cartPageOptions.renderTo.append(template);
     }
     renderCartPage(cartPageOptions: CartPageOptions, cartItems: CartItem[]): void {
-        throw new Error("Method not implemented.");
+        // iterate over cart items and display items
+        let templateOptions = cartPageOptions.templateOptions;
+        let cartItemsContainer  = $("#" + templateOptions.cartItemsContainerId);
+        cartItemsContainer.html("");
+        let subTotal = 0, cartItemTotalQty = 0;
+        cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
+            subTotal = subTotal + (cartItem.quantity * cartItem.item.price);
+            cartItemTotalQty = cartItemTotalQty + cartItem.quantity;
+            let template = templateOptions.cartItemTemplate(templateOptions, cartItem, index, cartItems);
+            cartItemsContainer.append(template)
+            cartItemsContainer.find("." + templateOptions.removeItemFromCartBtnElementClass + ":last").data("cartitem", cartItem)
+        });
+        // render the cartitems footer
+        let footerData = {
+            subTotal: subTotal
+        }
+        let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, cartItems, footerData);
+        cartItemsContainer.append(cartItemsFooterTemplate);
     }
     initializeEventListerners(cartPageOptions: CartPageOptions): void {
-        throw new Error("Method not implemented.");
+
     }
 }

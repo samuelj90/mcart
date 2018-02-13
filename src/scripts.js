@@ -1,11 +1,13 @@
 $(function () {
     $("body").mCart({
         cart: {
-
         },
         miniCart: {
             renderTo: $('#minicart-container'),
-            replaceRenderToContents: true
+            replaceRenderToContents: true,
+            onViewCartBtnClicked: function(){
+                window.location.href = './cart.html'
+            }
         },
         productListing: {
             renderTo: $('#product-listing-container'),
@@ -54,6 +56,9 @@ $(function () {
             afterProductListing: function (productListingOptions) {
                 console.log('After Product Listing');
             },
+        },
+        cartPage: {
+            renderTo:$('#cartpage-container')
         }
     });
 });

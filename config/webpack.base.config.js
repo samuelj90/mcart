@@ -75,6 +75,11 @@ module.exports = function (env) {
                 template: 'src/index.html',
                 filename: 'index.html',
                 metadata: METADATA
+            }),
+            new HtmlWebpackPlugin({
+                template: 'src/cart.html',
+                filename: 'cart.html',
+                metadata: METADATA
             })
         ]
 

@@ -10,6 +10,9 @@ export class ProductListing {
         if (isNullOrUndefined(productListingOptions)) {
             return;
         }
+        if (productListingOptions.renderTo.length <= 0) {
+            return;
+        }
         const combainedProductListingOptions = $.extend({}, defaultProductListingOptions, productListingOptions);
         this.initializeProductListing(combainedProductListingOptions);
     }
