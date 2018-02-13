@@ -46,8 +46,8 @@ export class ProductListing {
             if (index === (proudcts.length - 1)) {
                 if (!isNullOrUndefined(productListingOptions.afterProductListing)) {
                     productListingOptions.afterProductListing(productListingOptions);
-                    this.initializeProductListingEventListeners(productListingOptions);
                 }
+                this.initializeProductListingEventListeners(productListingOptions);
             }
         });
     }
