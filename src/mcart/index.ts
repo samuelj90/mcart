@@ -3,6 +3,7 @@ import { isNullOrUndefined } from "./utils";
 import { ProductListing } from "./product-listing";
 import { MiniCart } from "./mini-cart";
 import { Cart } from "./cart";
+import { CartPage } from "./cart-page";
 
 export class MCart {
     public static NAME: string = "mCart";
@@ -22,6 +23,7 @@ export class MCart {
         this.initializeProductListing();
         this.initializeCart()
         this.initializeMiniCart();
+        this.initializeCartPage();
     }
 
     private initializeProductListing(): void  {
@@ -34,6 +36,10 @@ export class MCart {
 
     private initializeMiniCart(): void  {
         new MiniCart(this.options.miniCart);
+    }
+
+    private initializeCartPage(): void  {
+        new CartPage(this.options.cartPage);
     }
 
 }
