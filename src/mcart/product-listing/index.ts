@@ -42,7 +42,8 @@ export class ProductListing {
             let templateOptions = productListingOptions.templateOptions;
             let template = templateOptions.template(templateOptions, product);
             productListingOptions.renderTo.append(template);
-            productListingOptions.renderTo.find("." + productListingOptions.templateOptions.addToCartBtnElementClass + ":last").data("product", product)
+            productListingOptions.renderTo.find("." + productListingOptions.templateOptions.addToCartBtnElementClass + ":last").data("product", product);
+            productListingOptions.renderTo.find("." + productListingOptions.templateOptions.buyNowBtnElementClass + ":last").data("product", product);
             if (index === (proudcts.length - 1)) {
                 if (!isNullOrUndefined(productListingOptions.afterProductListing)) {
                     productListingOptions.afterProductListing(productListingOptions);
@@ -64,6 +65,8 @@ export class ProductListing {
             }
         });
         $("body").on("click", buyNowBtnElementSelector, function (event) {
+            const product: Product = $(event.target).data("product");
+            Cart.insertProductToCart(product, 1);
             if (!isNullOrUndefined(productListingOptions.onBuyNowBtnClicked)) {
                 productListingOptions.onBuyNowBtnClicked(event);
             }

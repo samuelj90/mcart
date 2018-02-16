@@ -62,6 +62,21 @@ export class CartPage extends Cart {
         cartItemsContainer.append(cartItemsFooterTemplate);
     }
     initializeEventListerners(cartPageOptions: CartPageOptions): void {
-
+        let templateOptions = cartPageOptions.templateOptions;
+        let cartItemsContainer = cartPageOptions.renderTo.find("#" + templateOptions.cartItemsContainerId);
+        cartPageOptions.renderTo.on("click", ("." + templateOptions.removeItemFromCartBtnElementClass), function(){
+            console.debug("." + templateOptions.removeItemFromCartBtnElementClass + " clicked");
+            let cartItem: CartItem = $(this).data("cartitem");
+            if (!cartPageOptions.overideOnCartItemRemoveBtnClicked) {
+                Cart.removeCartItemFromCart(cartItem);
+            }
+            if (!isNullOrUndefined(cartPageOptions.onCartItemRemoveBtnClicked)) {
+                cartPageOptions.onCartItemRemoveBtnClicked(cartPageOptions, cartItem);
+            }
+        });
+        cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemIncrementerElementClass), function(){  
+        });
+        cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemDecrementerElementClass), function(){
+        });
     }
 }
