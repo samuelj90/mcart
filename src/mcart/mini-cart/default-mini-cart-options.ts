@@ -49,7 +49,7 @@ const miniCartOptions: MiniCartOptions = {
         "cartItemTemplate": function (miniCartTemplateOptions: MiniCartTemplateOptions, cartItem: CartItem, index: number, cartItems: CartItem[]) {
             return `
                     <div class="mcart-minicart-cart-item">
-                        <div class="mcart-minicart-image"> <img src="${cartItem.item.featuredImage}" alt="" /> </div>
+                        <div class="mcart-minicart-image"> <img src="${cartItem.item.featuredimage}" alt="" /> </div>
                         <div class="mcart-minicart-content">
                             <h4 class="mcart-minicart-title">
                             <a href="#">${cartItem.title}</a>

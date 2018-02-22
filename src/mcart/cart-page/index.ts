@@ -3,6 +3,7 @@ import { CartPageOptions } from "./cart-page-options";
 import { isNullOrUndefined } from "../utils";
 import { defaultCartPageOptions } from "./default-cart-page-options";
 import { CartItem } from "../cart/cart-item";
+import { Product } from "../product-listing/product";
 
 export class CartPage extends Cart {
 
@@ -45,21 +46,26 @@ export class CartPage extends Cart {
         // iterate over cart items and display items
         let templateOptions = cartPageOptions.templateOptions;
         let cartItemsContainer  = $("#" + templateOptions.cartItemsContainerId);
-        cartItemsContainer.html("");
         let subTotal = 0, cartItemTotalQty = 0;
-        cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
-            subTotal = subTotal + (cartItem.quantity * cartItem.item.price);
-            cartItemTotalQty = cartItemTotalQty + cartItem.quantity;
-            let template = templateOptions.cartItemTemplate(templateOptions, cartItem, index, cartItems);
-            cartItemsContainer.append(template)
-            cartItemsContainer.find("." + templateOptions.removeItemFromCartBtnElementClass + ":last").data("cartitem", cartItem)
-        });
-        // render the cartitems footer
+        if(cartItems.length == 0) {
+            cartItemsContainer.html('<tr><td colspan="5"><br/><br/><center>No items in Cart</center><br/><br/></td></tr>');
+        } else {            
+            cartItemsContainer.html("");
+            cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
+                subTotal = subTotal + (cartItem.quantity * cartItem.item.price);
+                cartItemTotalQty = cartItemTotalQty + cartItem.quantity;
+                let template = templateOptions.cartItemTemplate(templateOptions, cartItem, index, cartItems);
+                cartItemsContainer.append(template)
+                cartItemsContainer.find("." + templateOptions.removeItemFromCartBtnElementClass + ":last").data("cartitem", cartItem)
+                cartItemsContainer.find("." + templateOptions.cartItemIncrementerElementClass + ":last").data("cartitem", cartItem)
+                cartItemsContainer.find("." + templateOptions.cartItemDecrementerElementClass + ":last").data("cartitem", cartItem)
+            });
+        }
         let footerData = {
             subTotal: subTotal
         }
         let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, cartItems, footerData);
-        cartItemsContainer.append(cartItemsFooterTemplate);
+        $("#" + templateOptions.cartItemsFooterContainerId).html(cartItemsFooterTemplate);
     }
     initializeEventListerners(cartPageOptions: CartPageOptions): void {
         let templateOptions = cartPageOptions.templateOptions;
@@ -75,8 +81,14 @@ export class CartPage extends Cart {
             }
         });
         cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemIncrementerElementClass), function(){  
+            let cartItem: CartItem = $(this).data("cartitem");
+            let product: Product = cartItem.item;
+            Cart.insertProductToCart(product, 1);
         });
         cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemDecrementerElementClass), function(){
+            let cartItem: CartItem = $(this).data("cartitem");
+            let product: Product = cartItem.item;
+            Cart.removeProductFromCart(product, 1);
         });
     }
 }

@@ -17,7 +17,7 @@ const productListingOptions: ProductListingOptions = {
             <div class="product">
                 <div class="wrapper">
                     <div class="image">
-                        <img src="${product.featuredImage}">
+                        <img src="${product.featuredimage}">
                     </div>
                     <span class="price"> ${pricePrependLabel} ${product.price} ${priceAppendLabel}</span>
                     <h5> ${product.title} </h5>

@@ -10,4 +10,5 @@ export interface CartPageTemplateOptions {
     cartItemContainerElementId: string;
     checkoutBtnId: string;
     removeItemFromCartBtnElementClass: string;
+    cartItemsFooterContainerId: string;
 }

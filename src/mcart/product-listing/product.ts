@@ -31,7 +31,7 @@ export interface Product {
     title: string;
     description: string;
     price: number;
-    featuredImage: string;
+    featuredimage: string;
     images: string[];
     currency: string;
     additionalFields?: any;
