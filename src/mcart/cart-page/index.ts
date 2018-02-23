@@ -4,6 +4,7 @@ import { isNullOrUndefined } from "../utils";
 import { defaultCartPageOptions } from "./default-cart-page-options";
 import { CartItem } from "../cart/cart-item";
 import { Product } from "../product-listing/product";
+import { ShippingDetailsFormModel } from "./shipping-details-form-model";
 
 export class CartPage extends Cart {
 
@@ -66,6 +67,9 @@ export class CartPage extends Cart {
         }
         let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, cartItems, footerData);
         $("#" + templateOptions.cartItemsFooterContainerId).html(cartItemsFooterTemplate);
+        let shippingDetailsFormModel: ShippingDetailsFormModel= this.loadShippingDetailsFormModel(cartPageOptions);
+        let shippingDetailsFormTemplate = templateOptions.shippingDetailsFormTemplate(templateOptions, shippingDetailsFormModel);
+        $("#" + templateOptions.shippingDetailsFormContainerId).html(shippingDetailsFormTemplate);
     }
     initializeEventListerners(cartPageOptions: CartPageOptions): void {
         let templateOptions = cartPageOptions.templateOptions;
@@ -90,5 +94,11 @@ export class CartPage extends Cart {
             let product: Product = cartItem.item;
             Cart.removeProductFromCart(product, 1);
         });
+        cartPageOptions.renderTo.on("submit", ("." + templateOptions.shippingDetailsFormElemtnId), function(event){
+            event.preventDefault();
+        });
+    }
+    loadShippingDetailsFormModel(cartPageOptions: CartPageOptions): ShippingDetailsFormModel {
+        throw new Error("Method not implemented.");
     }
 }
