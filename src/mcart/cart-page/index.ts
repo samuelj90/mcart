@@ -7,7 +7,7 @@ import { Product } from "../product-listing/product";
 import { ShippingDetailsFormModel } from "./shipping-details-form-model";
 
 export class CartPage extends Cart {
-
+    private cartPageModel: any = {};
     constructor(cartPageOptions: CartPageOptions) {
         super();
         if (isNullOrUndefined(cartPageOptions)) {
@@ -23,6 +23,7 @@ export class CartPage extends Cart {
         behaviourSubject.subscribe(
             function (cartItems: CartItem[]) {
                 console.debug("cartItems >> ", cartItems)
+                self.cartPageModel.cartItems = cartItems;
                 self.renderCartPage(cartPageOptions, cartItems);
             },
             function (error) {
@@ -46,11 +47,11 @@ export class CartPage extends Cart {
     renderCartPage(cartPageOptions: CartPageOptions, cartItems: CartItem[]): void {
         // iterate over cart items and display items
         let templateOptions = cartPageOptions.templateOptions;
-        let cartItemsContainer  = $("#" + templateOptions.cartItemsContainerId);
+        let cartItemsContainer = $("#" + templateOptions.cartItemsContainerId);
         let subTotal = 0, cartItemTotalQty = 0;
-        if(cartItems.length == 0) {
-            cartItemsContainer.html('<tr><td colspan="5"><br/><br/><center>No items in Cart</center><br/><br/></td></tr>');
-        } else {            
+        if (cartItems.length === 0) {
+            cartItemsContainer.html("<tr><td colspan=\"5\"><br/><br/><center>No items in Cart</center><br/><br/></td></tr>");
+        } else {
             cartItemsContainer.html("");
             cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
                 subTotal = subTotal + (cartItem.quantity * cartItem.item.price);
@@ -67,14 +68,17 @@ export class CartPage extends Cart {
         }
         let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, cartItems, footerData);
         $("#" + templateOptions.cartItemsFooterContainerId).html(cartItemsFooterTemplate);
-        let shippingDetailsFormModel: ShippingDetailsFormModel= this.loadShippingDetailsFormModel(cartPageOptions);
+        let shippingDetailsFormModel: ShippingDetailsFormModel = this.loadShippingDetailsFormModel(cartPageOptions);
         let shippingDetailsFormTemplate = templateOptions.shippingDetailsFormTemplate(templateOptions, shippingDetailsFormModel);
         $("#" + templateOptions.shippingDetailsFormContainerId).html(shippingDetailsFormTemplate);
+        let couponCodeFormTemplate = templateOptions.couponCodeFormTemplate(templateOptions);
+        $("#" + templateOptions.couponCodeFormContainerId).html(couponCodeFormTemplate);
     }
     initializeEventListerners(cartPageOptions: CartPageOptions): void {
+        let self = this;
         let templateOptions = cartPageOptions.templateOptions;
         let cartItemsContainer = cartPageOptions.renderTo.find("#" + templateOptions.cartItemsContainerId);
-        cartPageOptions.renderTo.on("click", ("." + templateOptions.removeItemFromCartBtnElementClass), function(){
+        cartPageOptions.renderTo.on("click", ("." + templateOptions.removeItemFromCartBtnElementClass), function () {
             console.debug("." + templateOptions.removeItemFromCartBtnElementClass + " clicked");
             let cartItem: CartItem = $(this).data("cartitem");
             if (!cartPageOptions.overideOnCartItemRemoveBtnClicked) {
@@ -84,21 +88,96 @@ export class CartPage extends Cart {
                 cartPageOptions.onCartItemRemoveBtnClicked(cartPageOptions, cartItem);
             }
         });
-        cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemIncrementerElementClass), function(){  
+        cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemIncrementerElementClass), function () {
             let cartItem: CartItem = $(this).data("cartitem");
             let product: Product = cartItem.item;
             Cart.insertProductToCart(product, 1);
         });
-        cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemDecrementerElementClass), function(){
+        cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemDecrementerElementClass), function () {
             let cartItem: CartItem = $(this).data("cartitem");
             let product: Product = cartItem.item;
             Cart.removeProductFromCart(product, 1);
         });
-        cartPageOptions.renderTo.on("submit", ("." + templateOptions.shippingDetailsFormElemtnId), function(event){
+        cartPageOptions.renderTo.on("submit", ("#" + templateOptions.shippingDetailsFormElemtnId), function (event) {
             event.preventDefault();
+            console.debug("Shipping details form submitted");
+            self.updateCartTotalsOnShippingDetailsChanged(cartPageOptions);
+        });
+        cartPageOptions.renderTo.on("submit", ("#" + templateOptions.couponCodeFormElemtnId), function (event) {
+            event.preventDefault();
+            console.debug("Coupon code form submitted");
+            self.updateCouponCodeChanged(cartPageOptions);
+        });
+        cartPageOptions.renderTo.on("change", ("#" + templateOptions.shippingDetailsFormCountryElemtnId), function () {
+            let shippingDetailsFormModel = self.loadShippingDetailsFormModel(cartPageOptions);
+            let states = shippingDetailsFormModel.states[$(this).find("option:selected").val()]
+            $(("#" + templateOptions.shippingDetailsFormStateElemtnId)).html("<option selected> Select a State</option> " + shippingDetailsFormModel.convertArrayToOptions(states));
+        })
+        cartPageOptions.renderTo.on("click", "#" + templateOptions.checkoutBtnId, function(){
+            cartPageOptions.renderTo.find("#" + templateOptions.shippingDetailsFormElemtnId).submit();
+            let alertMessages = ""
+            if (isNullOrUndefined(self.cartPageModel.cartItems)) {
+                alertMessages = alertMessages + self.createAlert("error", "Cart items is empty");
+            }
+            if (isNullOrUndefined(self.cartPageModel.shippingDetails)) {
+                alertMessages = alertMessages + self.createAlert("error", "Shipping details is not valid");
+            }
+            if (alertMessages === "") {
+                $.ajax({
+                    url: cartPageOptions.checkoutConfirmSubmitUrl,
+                    method: "POST",
+                    data: self.cartPageModel,
+                    success: function(data, textStatus, jqXHR) {
+                        localStorage.setItem("orderid", data.orderId);
+                        window.location.href = cartPageOptions.checkoutConfirmSuccessUrl
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alertMessages = errorThrown
+                    }
+                })
+            }
+            let window: any;
+            window.scrollTop = document.getElementById(templateOptions.alertMessageContainerId).offsetTop;
+            cartPageOptions.renderTo.find("#" + templateOptions.alertMessageContainerId).html(alertMessages);
         });
     }
     loadShippingDetailsFormModel(cartPageOptions: CartPageOptions): ShippingDetailsFormModel {
-        throw new Error("Method not implemented.");
+        return {
+            countries: ["Australia"],
+            states: {
+                "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast–Tweed Heads", "Newcastle–Maitland", "Canberra–Queanbeyan", "Sunshine Coast", "Wollongong", "Hobart", "Geelong", "Townsville", "Cairns", "Darwin", "Toowoomba", "Ballarat", "Bendigo", "Albury–Wodonga", "Launceston", "Mackay", "Rockhampton", "Bunbury", "Bundaberg", "Coffs Harbour", "Wagga Wagga", "Hervey Bay", "Mildura–Wentworth", "Shepparton–Mooroopna", "Port Macquarie", "Gladstone–Tannum Sands", "Tamworth", "Traralgon–Morwell", "Orange", "Bowral–Mittagong", "Geraldton", "Busselton", "Dubbo", "Nowra–Bomaderry", "Bathurst", "Warragul–Drouin", "Warrnambool", "Albany", "Kalgoorlie–Boulder", "Devonport"]
+            },
+            convertArrayToOptions: function (arrayOfOptions) {
+                let returnValue = "";
+                if (arrayOfOptions.length >= 1) {
+                    for (let i = 0; i < arrayOfOptions.length; i++) {
+                        returnValue = returnValue + "<option value=\"" + arrayOfOptions[i] + "\">" + arrayOfOptions[i] + "</option>"
+                    }
+                }
+                return returnValue;
+            }
+        };
+    }
+    updateCartTotalsOnShippingDetailsChanged(cartPageOptions: CartPageOptions) {
+        let templateOptions = cartPageOptions.templateOptions;
+        this.cartPageModel.shippingDetails = this.getFormData($("#" + templateOptions.shippingDetailsFormElemtnId))
+    }
+    getFormData($form) {
+        let unindexed_array = $form.serializeArray();
+        let indexed_array = {};
+        $.map(unindexed_array, function(n, i){
+            indexed_array[n["name"]] = n["value"];
+        });
+        return indexed_array;
+    }
+    createAlert(alertType: string, alertMessage: string) {
+        return "<div class=\"alert alert-error alert-dismissible\">" +
+        "    <a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">×</a>" +
+        + alertMessage +
+        "  </div>";
+    }
+    updateCouponCodeChanged(cartPageOptions: CartPageOptions) {
+        let templateOptions = cartPageOptions.templateOptions;
+        this.cartPageModel.couponCodeDetails = this.getFormData($("#" + templateOptions.couponCodeFormElemtnId))
     }
 }

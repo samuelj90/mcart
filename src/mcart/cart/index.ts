@@ -73,13 +73,12 @@ export class Cart {
     public static removeProductFromCart(product: Product, count: number = 1) {
         const isItemExist: boolean = Cart.cartItems.map((value: CartItem, index: number, cartItems: CartItem[]) => {
             if (value.title === product.title ) {
-                if(value.quantity - count >= 1){
+                if (value.quantity - count >= 1) {
                     value.quantity = value.quantity - count;
                     return true;
-                } else if (value.quantity - count == 0){
+                } else if (value.quantity - count === 0) {
                     this.removeCartItemFromCart(value);
-                }
-                else {
+                } else {
                     throw new RangeError("Invalid number of product requested to remove");
                 }
             }
