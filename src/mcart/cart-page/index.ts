@@ -7,7 +7,9 @@ import { Product } from "../product-listing/product";
 import { ShippingDetailsFormModel } from "./shipping-details-form-model";
 
 export class CartPage extends Cart {
-    private cartPageModel: any = {};
+    private cartPageModel: any = {
+        shippingFormValid : false
+    };
     constructor(cartPageOptions: CartPageOptions) {
         super();
         if (isNullOrUndefined(cartPageOptions)) {
@@ -102,6 +104,7 @@ export class CartPage extends Cart {
             event.preventDefault();
             console.debug("Shipping details form submitted");
             self.updateCartTotalsOnShippingDetailsChanged(cartPageOptions);
+            self.cartPageModel.shippingFormValid = true;
         });
         cartPageOptions.renderTo.on("submit", ("#" + templateOptions.couponCodeFormElemtnId), function (event) {
             event.preventDefault();
@@ -111,33 +114,23 @@ export class CartPage extends Cart {
         cartPageOptions.renderTo.on("change", ("#" + templateOptions.shippingDetailsFormCountryElemtnId), function () {
             let shippingDetailsFormModel = self.loadShippingDetailsFormModel(cartPageOptions);
             let states = shippingDetailsFormModel.states[$(this).find("option:selected").val()]
-            $(("#" + templateOptions.shippingDetailsFormStateElemtnId)).html("<option selected> Select a State</option> " + shippingDetailsFormModel.convertArrayToOptions(states));
+            $(("#" + templateOptions.shippingDetailsFormStateElemtnId)).html("<option selected value=\"\"> Select a State</option> " + shippingDetailsFormModel.convertArrayToOptions(states));
         })
         cartPageOptions.renderTo.on("click", "#" + templateOptions.checkoutBtnId, function(){
-            cartPageOptions.renderTo.find("#" + templateOptions.shippingDetailsFormElemtnId).submit();
+            cartPageOptions.renderTo.find("#" + templateOptions.couponCodeFormElemtnId).submit();
             let alertMessages = ""
-            if (isNullOrUndefined(self.cartPageModel.cartItems)) {
+            console.log(self.cartPageModel.cartItems);
+            if (self.cartPageModel.cartItems.length < 1) {
                 alertMessages = alertMessages + self.createAlert("error", "Cart items is empty");
             }
-            if (isNullOrUndefined(self.cartPageModel.shippingDetails)) {
+            console.log(self.cartPageModel.shippingDetails);
+            if (!self.cartPageModel.shippingFormValid) {
                 alertMessages = alertMessages + self.createAlert("error", "Shipping details is not valid");
             }
             if (alertMessages === "") {
-                $.ajax({
-                    url: cartPageOptions.checkoutConfirmSubmitUrl,
-                    method: "POST",
-                    data: self.cartPageModel,
-                    success: function(data, textStatus, jqXHR) {
-                        localStorage.setItem("orderid", data.orderId);
-                        window.location.href = cartPageOptions.checkoutConfirmSuccessUrl
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        alertMessages = errorThrown
-                    }
-                })
+                localStorage.setItem("mcart-cart-page-model", JSON.stringify(self.cartPageModel));
+                window.location.href = cartPageOptions.checkoutConfirmUrl;
             }
-            let window: any;
-            window.scrollTop = document.getElementById(templateOptions.alertMessageContainerId).offsetTop;
             cartPageOptions.renderTo.find("#" + templateOptions.alertMessageContainerId).html(alertMessages);
         });
     }
@@ -171,9 +164,9 @@ export class CartPage extends Cart {
         return indexed_array;
     }
     createAlert(alertType: string, alertMessage: string) {
-        return "<div class=\"alert alert-error alert-dismissible\">" +
+        return "<div class=\"alert alert-danger alert-dismissible\">" +
         "    <a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">×</a>" +
-        + alertMessage +
+        alertMessage +
         "  </div>";
     }
     updateCouponCodeChanged(cartPageOptions: CartPageOptions) {
