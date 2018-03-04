@@ -125,7 +125,7 @@ export class CartPage extends Cart {
             }
             console.log(self.cartPageModel.shippingDetails);
             if (!self.cartPageModel.shippingFormValid) {
-                alertMessages = alertMessages + self.createAlert("error", "Shipping details is not valid");
+                alertMessages = alertMessages + self.createAlert("error", "Shipping details is not valid or pls submit shipping details");
             }
             if (alertMessages === "") {
                 localStorage.setItem("mcart-cart-page-model", JSON.stringify(self.cartPageModel));

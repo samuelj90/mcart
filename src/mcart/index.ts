@@ -4,6 +4,7 @@ import { ProductListing } from "./product-listing";
 import { MiniCart } from "./mini-cart";
 import { Cart } from "./cart";
 import { CartPage } from "./cart-page";
+import { ConfirmationPage } from "./confirmation-page";
 
 export class MCart {
     public static NAME: string = "mCart";
@@ -24,6 +25,7 @@ export class MCart {
         this.initializeCart()
         this.initializeMiniCart();
         this.initializeCartPage();
+        this.initializeCartConfirmPage();
     }
 
     private initializeProductListing(): void  {
@@ -40,6 +42,9 @@ export class MCart {
 
     private initializeCartPage(): void  {
         new CartPage(this.options.cartPage);
+    }
+    private initializeCartConfirmPage(): void  {
+        new ConfirmationPage(this.options.confirmationPage);
     }
 
 }

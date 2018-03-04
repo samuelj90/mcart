@@ -10,7 +10,6 @@ export interface CartPageTemplateOptions {
     cartItemsContainerId: string;
     cartItemIncrementerElementClass: string;
     cartItemDecrementerElementClass: string;
-    cartItemContainerElementId: string;
     checkoutBtnId: string;
     removeItemFromCartBtnElementClass: string;
     cartItemsFooterContainerId: string;
