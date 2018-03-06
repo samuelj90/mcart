@@ -5,7 +5,7 @@ import { CartItem } from "../cart/cart-item";
 import { ShippingDetailsFormModel } from "../cart-page/shipping-details-form-model";
 
 export class ConfirmationPage{
-    private cartPageModel: any;
+    private orderModel: any;
     constructor(confirmationPageOptions: ConfirmationPageOptions) {
         if (isNullOrUndefined(confirmationPageOptions)) {
             return;
@@ -14,18 +14,18 @@ export class ConfirmationPage{
             return;
         }
         this.initializeConfirmationPage(confirmationPageOptions);
-        let cartItems: CartItem[] = this.cartPageModel.cartItems;
+        let cartItems: CartItem[] = this.orderModel.cartItems;
         this.renderConfirrmationPage(confirmationPageOptions, cartItems);
         this.initializeEventListerners(confirmationPageOptions);
     }
     private initializeConfirmationPage(confirmationPageOptions: ConfirmationPageOptions) {
-        if (confirmationPageOptions.replaceRenderToContents) {
-            confirmationPageOptions.renderTo.html("");
-        }
-        if(localStorage.getItem("mcart-cart-page-model")){
+        if(localStorage.getItem("mcart-order-model")){
             let templateOptions = confirmationPageOptions.templateOptions;
-            this.cartPageModel = JSON.parse(localStorage.getItem("mcart-cart-page-model"));
+            this.orderModel = JSON.parse(localStorage.getItem("mcart-order-model"));
             let template = templateOptions.template(templateOptions);
+            if (confirmationPageOptions.replaceRenderToContents) {
+                confirmationPageOptions.renderTo.html("");
+            }
             confirmationPageOptions.renderTo.append(template);
         } else {
             window.location.href = '/';
@@ -51,10 +51,10 @@ export class ConfirmationPage{
         }
         let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, cartItems, footerData);
         $("#" + templateOptions.cartItemsFooterContainerId).html(cartItemsFooterTemplate);
-        let shippingDetails = this.cartPageModel.shippingDetails;
+        let shippingDetails = this.orderModel.shippingDetails;
         let shippingDetailsTemplate = templateOptions.shippingDetailsTemplate(templateOptions,shippingDetails);
         $("#" + templateOptions.shippingDetailsContainerId).html(shippingDetailsTemplate);
-        let couponCode = this.cartPageModel.couponCodeDetails;
+        let couponCode = this.orderModel.couponCodeDetails;
         let couponCodeTemplate = templateOptions.couponCodeTemplate(templateOptions, couponCode);
         $("#" + templateOptions.couponCodeContainerId).html(couponCodeTemplate);
     }
@@ -65,9 +65,8 @@ export class ConfirmationPage{
             $.ajax({
                 url: confirmationPageOptions.createOrderURL,
                 method: "POST",
-                data: self.cartPageModel,
+                data: self.orderModel,
                 success: function (data, textStatus, jqXHR) {
-                    localStorage.setItem("orderid", data.orderId);
                     window.location.href = data.paypalURL
                 },
                 error: function (jqXHR, textStatus, errorThrown) {

@@ -7,7 +7,7 @@ import { Product } from "../product-listing/product";
 import { ShippingDetailsFormModel } from "./shipping-details-form-model";
 
 export class CartPage extends Cart {
-    private cartPageModel: any = {
+    private orderModel: any = {
         shippingFormValid : false
     };
     constructor(cartPageOptions: CartPageOptions) {
@@ -25,7 +25,7 @@ export class CartPage extends Cart {
         behaviourSubject.subscribe(
             function (cartItems: CartItem[]) {
                 console.debug("cartItems >> ", cartItems)
-                self.cartPageModel.cartItems = cartItems;
+                self.orderModel.cartItems = cartItems;
                 self.renderCartPage(cartPageOptions, cartItems);
             },
             function (error) {
@@ -104,7 +104,7 @@ export class CartPage extends Cart {
             event.preventDefault();
             console.debug("Shipping details form submitted");
             self.updateCartTotalsOnShippingDetailsChanged(cartPageOptions);
-            self.cartPageModel.shippingFormValid = true;
+            self.orderModel.shippingFormValid = true;
         });
         cartPageOptions.renderTo.on("submit", ("#" + templateOptions.couponCodeFormElemtnId), function (event) {
             event.preventDefault();
@@ -119,17 +119,29 @@ export class CartPage extends Cart {
         cartPageOptions.renderTo.on("click", "#" + templateOptions.checkoutBtnId, function(){
             cartPageOptions.renderTo.find("#" + templateOptions.couponCodeFormElemtnId).submit();
             let alertMessages = ""
-            console.log(self.cartPageModel.cartItems);
-            if (self.cartPageModel.cartItems.length < 1) {
+            console.log(self.orderModel.cartItems);
+            if (self.orderModel.cartItems.length < 1) {
                 alertMessages = alertMessages + self.createAlert("error", "Cart items is empty");
             }
-            console.log(self.cartPageModel.shippingDetails);
-            if (!self.cartPageModel.shippingFormValid) {
+            console.log(self.orderModel.shippingDetails);
+            if (!self.orderModel.shippingFormValid) {
                 alertMessages = alertMessages + self.createAlert("error", "Shipping details is not valid or pls submit shipping details");
             }
             if (alertMessages === "") {
-                localStorage.setItem("mcart-cart-page-model", JSON.stringify(self.cartPageModel));
-                window.location.href = cartPageOptions.checkoutConfirmUrl;
+                /*$.ajax({
+                    type: 'POST',
+                    url: cartPageOptions.createOrderUrl, 
+                    data: self.orderModel,
+                    success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
+                        self.orderModel.orderId = data.orderId;*/
+                        localStorage.setItem("mcart-order-model", JSON.stringify(self.orderModel));
+                        window.location.href = cartPageOptions.checkoutConfirmUrl;
+                    /*}, 
+                    error: (jqXHR: JQueryXHR, textStatus: string, errorThrown: string) => {
+                        console.log(jqXHR,textStatus,errorThrown)
+                    },
+                    dataType : "json"
+                });*/
             }
             cartPageOptions.renderTo.find("#" + templateOptions.alertMessageContainerId).html(alertMessages);
         });
@@ -153,7 +165,7 @@ export class CartPage extends Cart {
     }
     updateCartTotalsOnShippingDetailsChanged(cartPageOptions: CartPageOptions) {
         let templateOptions = cartPageOptions.templateOptions;
-        this.cartPageModel.shippingDetails = this.getFormData($("#" + templateOptions.shippingDetailsFormElemtnId))
+        this.orderModel.shippingDetails = this.getFormData($("#" + templateOptions.shippingDetailsFormElemtnId))
     }
     getFormData($form) {
         let unindexed_array = $form.serializeArray();
@@ -171,6 +183,6 @@ export class CartPage extends Cart {
     }
     updateCouponCodeChanged(cartPageOptions: CartPageOptions) {
         let templateOptions = cartPageOptions.templateOptions;
-        this.cartPageModel.couponCodeDetails = this.getFormData($("#" + templateOptions.couponCodeFormElemtnId))
+        this.orderModel.couponCodeDetails = this.getFormData($("#" + templateOptions.couponCodeFormElemtnId))
     }
 }

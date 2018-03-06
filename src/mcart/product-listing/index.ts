@@ -25,13 +25,15 @@ export class ProductListing {
             productListingOptions.renderTo.html("");
         }
         if (isNullOrUndefined(productListingOptions.products)) {
-            $.get(
-                productListingOptions.endpoints.getProducts,
-                (data: any, textStatus: string, jqXHR: JQueryXHR) => {
+            $.ajax({
+                type: 'GET',
+                url: productListingOptions.endpoints.getProducts,
+                success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                     productListingOptions.products = data;
                     this.renderProductListing(productListingOptions);
-                }
-            );
+                },
+                dataType : "json"
+            });
         } else {
             this.renderProductListing(productListingOptions);
         }

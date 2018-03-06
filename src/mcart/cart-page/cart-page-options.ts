@@ -17,5 +17,6 @@ export interface CartPageOptions {
     couponCodeImplementation?: () => void;
     beforeApplyCouponCode?: () => void;
     afterCouponCodeApplied?: () => void;
+    createOrderUrl: string;
     checkoutConfirmUrl: string;
 }
