@@ -1,9 +1,16 @@
+import { error } from 'util';
 import { MiniCartOptions} from "./mini-cart-options";
 import { isNullOrUndefined } from "../utils";
 import { Cart } from "../cart";
 import { CartItem } from "../cart/cart-item";
 import { Observable } from "rxjs/Observable";
 import { defaultMiniCartOptions } from "./default-mini-cart-options";
+import  *  as ejs from "ejs" ;
+/**
+ * - Should support multiple minicart on single configuartion
+ * - Should have multiple cart items counter and multiple totals
+ * - May or maynot have checkout and view cart buttons
+ */
 export class MiniCart extends Cart {
     private cartItems: CartItem[];
 
@@ -12,35 +19,46 @@ export class MiniCart extends Cart {
         if (isNullOrUndefined(miniCartOptions)) {
             return;
         }
-        if (miniCartOptions.renderTo.length <= 0) {
+        if (miniCartOptions.renderToElements.length  <= 0) {
             return;
         }
+        try {
+            // TODO : Remove processing of  .
+            miniCartOptions.renderToElements.forEach((renderToElement: JQuery, index: number, renderToElements: JQuery[]) => {
+                if (renderToElement.length <= 0) {
+                    throw new Error(`renderToElement ${renderToElement},  is not found in DOM`);
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
         miniCartOptions = $.extend({}, defaultMiniCartOptions, miniCartOptions);
         this.initializeMiniCart(miniCartOptions);
         const behaviourSubject = this.getCartItemsSubject();
         const self = this;
         behaviourSubject.subscribe(
             function (cartItems: CartItem[]) {
-                console.debug("cartItems >> ", cartItems)
                 self.renderMiniCartItems(miniCartOptions, cartItems);
+                // TODO: Remove unused event bindings.
+                self.initializeEventListerners(miniCartOptions);
             },
             function (error) {
-                console.log("Error", error);
+                console.error("Error", error);
             },
             function () {
-                console.debug("Completed");
+                console.debug("Completed behaviour subject subscription");
             }
         );
-        this.initializeEventListerners(miniCartOptions);
-        console.log(behaviourSubject.observers);
     }
 
     private initializeMiniCart(miniCartOptions: MiniCartOptions): void {
         if (miniCartOptions.replaceRenderToContents) {
             miniCartOptions.renderTo.html("");
         }
-        let templateOptions = miniCartOptions.templateOptions;
-        let template = templateOptions.template(templateOptions, 0);
+        let miniCartTemplateOptions = miniCartOptions.templateOptions;
+        // let template = templateOptions.template(templateOptions, 0);
+        let template = ejs.compile(miniCartTemplateOptions.template)(miniCartTemplateOptions) // ejs.render(miniCartTemplateOptions.template, miniCartTemplateOptions);
         miniCartOptions.renderTo.append(template);
     }
 

@@ -1,18 +1,17 @@
 $(function () {
     $("body").mCart({
-        cart: {
-        },
+        cart: {},
         miniCart: {
             renderTo: $('#minicart-container'),
             replaceRenderToContents: true,
-            onViewCartBtnClicked: function(){
+            onViewCartBtnClicked: function () {
                 window.location.href = './cart.html'
             }
         },
         productListing: {
             renderTo: $('#product-listing-container'),
             replaceRenderToContents: true,
-            endpoints : {
+            endpoints: {
                 getProducts: "/lib/proudcts.json"
             },
             templateOptions: {
@@ -58,7 +57,7 @@ $(function () {
             },
         },
         cartPage: {
-            renderTo:$('#cartpage-container')
+            renderTo: $('#cartpage-container')
         }
     });
 });

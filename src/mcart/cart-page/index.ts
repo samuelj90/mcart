@@ -130,13 +130,13 @@ export class CartPage extends Cart {
             if (alertMessages === "") {
                 /*$.ajax({
                     type: 'POST',
-                    url: cartPageOptions.createOrderUrl, 
+                    url: cartPageOptions.createOrderUrl,
                     data: self.orderModel,
                     success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                         self.orderModel.orderId = data.orderId;*/
                         localStorage.setItem("mcart-order-model", JSON.stringify(self.orderModel));
                         window.location.href = cartPageOptions.checkoutConfirmUrl;
-                    /*}, 
+                    /*},
                     error: (jqXHR: JQueryXHR, textStatus: string, errorThrown: string) => {
                         console.log(jqXHR,textStatus,errorThrown)
                     },

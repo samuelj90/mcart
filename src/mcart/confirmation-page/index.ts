@@ -4,7 +4,7 @@ import { Cart } from "../cart";
 import { CartItem } from "../cart/cart-item";
 import { ShippingDetailsFormModel } from "../cart-page/shipping-details-form-model";
 
-export class ConfirmationPage{
+export class ConfirmationPage {
     private orderModel: any;
     constructor(confirmationPageOptions: ConfirmationPageOptions) {
         if (isNullOrUndefined(confirmationPageOptions)) {
@@ -19,7 +19,7 @@ export class ConfirmationPage{
         this.initializeEventListerners(confirmationPageOptions);
     }
     private initializeConfirmationPage(confirmationPageOptions: ConfirmationPageOptions) {
-        if(localStorage.getItem("mcart-order-model")){
+        if (localStorage.getItem("mcart-order-model")) {
             let templateOptions = confirmationPageOptions.templateOptions;
             this.orderModel = JSON.parse(localStorage.getItem("mcart-order-model"));
             let template = templateOptions.template(templateOptions);
@@ -28,7 +28,7 @@ export class ConfirmationPage{
             }
             confirmationPageOptions.renderTo.append(template);
         } else {
-            window.location.href = '/';
+            window.location.href = "/";
         }
     }
     private renderConfirrmationPage(confirmationPageOptions: ConfirmationPageOptions, cartItems: CartItem[]) {
@@ -36,7 +36,7 @@ export class ConfirmationPage{
         let cartItemsContainer = $("#" + templateOptions.cartItemsContainerId);
         let subTotal = 0, cartItemTotalQty = 0;
         if (cartItems.length === 0) {
-            window.location.href = '/';
+            window.location.href = "/";
         } else {
             cartItemsContainer.html("");
             cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
@@ -52,7 +52,7 @@ export class ConfirmationPage{
         let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, cartItems, footerData);
         $("#" + templateOptions.cartItemsFooterContainerId).html(cartItemsFooterTemplate);
         let shippingDetails = this.orderModel.shippingDetails;
-        let shippingDetailsTemplate = templateOptions.shippingDetailsTemplate(templateOptions,shippingDetails);
+        let shippingDetailsTemplate = templateOptions.shippingDetailsTemplate(templateOptions, shippingDetails);
         $("#" + templateOptions.shippingDetailsContainerId).html(shippingDetailsTemplate);
         let couponCode = this.orderModel.couponCodeDetails;
         let couponCodeTemplate = templateOptions.couponCodeTemplate(templateOptions, couponCode);

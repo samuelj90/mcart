@@ -26,7 +26,7 @@ export class ProductListing {
         }
         if (isNullOrUndefined(productListingOptions.products)) {
             $.ajax({
-                type: 'GET',
+                type: "GET",
                 url: productListingOptions.endpoints.getProducts,
                 success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                     productListingOptions.products = data;
