@@ -1,17 +1,16 @@
 import { CartItem } from "../cart/cart-item";
 import { Cart } from "../cart";
 
-export interface MiniCartOptions {
+export interface MiniCartOption {
     renderToElement: JQuery;
     replaceRenderToElementContent: boolean;
-    triggerElement: JQuery;
-    cartItemsCounterElement: JQuery;
-    viewCartElement: JQuery;
-    proceedToChekcoutElement: JQuery;
-    cartItemRemoveElement: JQuery;
+    triggerElement: string;
+    viewCartElement?: string;
+    proceedToChekcoutElement?: string;
+    cartItemRemoveElement?: string;
     template: string;
-    onTriggerElementClicked?: (miniCartOptions: MiniCartOptions, $this: JQuery) => void;
-    onViewCartElementClicked?: (miniCartOptions: MiniCartOptions, $this: JQuery) => void;
-    onProceedToCheckoutElementClicked?: (miniCartOptions: MiniCartOptions, $this: JQuery) => void;
-    onCartItemRemoveElementClicked?: (miniCartOptions: MiniCartOptions, cartItem: CartItem, $this: JQuery) => void;
+    onTriggerElementClicked?: (miniCartOption: MiniCartOption, $this: JQuery) => void;
+    onViewCartElementClicked?: (miniCartOption: MiniCartOption, $this: JQuery) => void;
+    onProceedToCheckoutElementClicked?: (miniCartOption: MiniCartOption, $this: JQuery) => void;
+    onCartItemRemoveElementClicked?: (miniCartOption: MiniCartOption, cartItem: CartItem, $this: JQuery) => void;
 }

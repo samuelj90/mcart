@@ -1,13 +1,10 @@
 $(function () {
     $("body").mCart({
         cart: {},
-        miniCart: {
-            renderTo: $('#minicart-container'),
-            replaceRenderToContents: true,
-            onViewCartBtnClicked: function () {
-                window.location.href = './cart.html'
-            }
-        },
+        miniCart: [{
+            renderToElement: $('#minicart-container'),
+            replaceRenderToElementContent: true
+        },],
         productListing: {
             renderTo: $('#product-listing-container'),
             replaceRenderToContents: true,
