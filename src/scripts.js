@@ -5,9 +5,9 @@ $(function () {
             renderToElement: $('#minicart-container'),
             replaceRenderToElementContent: true
         },],
-        productListing: {
-            renderTo: $('#product-listing-container'),
-            replaceRenderToContents: true,
+        productListing: [{
+            renderToElement: $('#product-listing-container'),
+            replaceRenderToElementContent: true,
             endpoints: {
                 getProducts: "/lib/proudcts.json"
             },
@@ -52,7 +52,7 @@ $(function () {
             afterProductListing: function (productListingOptions) {
                 console.log('After Product Listing');
             },
-        },
+        }],
         cartPage: {
             renderTo: $('#cartpage-container')
         }
