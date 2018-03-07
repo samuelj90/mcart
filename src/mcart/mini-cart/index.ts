@@ -1,4 +1,4 @@
-import { error } from 'util';
+import { error } from "util";
 import { MiniCartOption } from "./mini-cart-options";
 import { isNullOrUndefined } from "../utils";
 import { Cart } from "../cart";
@@ -16,9 +16,6 @@ export class MiniCart extends Cart {
 
     constructor(private miniCartOptions: MiniCartOption[]) {
         super();
-        if (isNullOrUndefined(miniCartOptions) || miniCartOptions.length <= 0) {
-            return;
-        }
         const behaviourSubject = this.getCartItemsSubject();
         const self = this;
         behaviourSubject.subscribe(
@@ -46,40 +43,47 @@ export class MiniCart extends Cart {
                     miniCartOption.renderToElement.html("");
                 }
                 let total = 0;
-                cartItems.forEach((cartItem: CartItem, index:number) => {
-                    total= total + cartItem.item.price* cartItem.quantity
-                })
+                cartItems.forEach((cartItem: CartItem, index: number) => {
+                    total = total + cartItem.item.price * cartItem.quantity;
+                });
                 let templateData = {
                     cartItems: cartItems,
                     total: total
-                }
+                };
                 let template = ejs.compile(miniCartOption.template)(templateData);
                 if (!!miniCartOption.triggerElement) {
-                    miniCartOption.renderToElement.off('click', miniCartOption.triggerElement);
+                    miniCartOption.renderToElement.off("click", miniCartOption.triggerElement);
                 }
                 if (!!miniCartOption.viewCartElement) {
-                    miniCartOption.renderToElement.off('click',miniCartOption.viewCartElement);
+                    miniCartOption.renderToElement.off("click", miniCartOption.viewCartElement);
                 }
                 if (!!miniCartOption.proceedToChekcoutElement) {
-                    miniCartOption.renderToElement.off('click', miniCartOption.proceedToChekcoutElement);
+                    miniCartOption.renderToElement.off("click", miniCartOption.proceedToChekcoutElement);
                 }
                 if (!!miniCartOption.cartItemRemoveElement) {
-                    miniCartOption.renderToElement.off('click', miniCartOption.cartItemRemoveElement);
+                    miniCartOption.renderToElement.off("click", miniCartOption.cartItemRemoveElement);
                 }
                 miniCartOption.renderToElement.append(template);
-                const defaultEventHandler = function(event: JQueryEventObject){
-                    event.stopPropagation();
-                    let $this: JQuery = $(this);
-                    miniCartOption.onTriggerElementClicked(miniCartOption, $this);
-                }
                 if (!!miniCartOption.triggerElement) {
-                    miniCartOption.renderToElement.on('click', miniCartOption.triggerElement, defaultEventHandler);
+                    miniCartOption.renderToElement.on("click", miniCartOption.triggerElement, function(event: JQueryEventObject){
+                        event.stopPropagation();
+                        let $this: JQuery = $(this);
+                        miniCartOption.onTriggerElementClicked(miniCartOption, $this);
+                    });
                 }
                 if (!!miniCartOption.viewCartElement) {
-                    miniCartOption.renderToElement.on('click',miniCartOption.viewCartElement, defaultEventHandler);
+                    miniCartOption.renderToElement.on("click", miniCartOption.viewCartElement, function(event: JQueryEventObject){
+                        event.stopPropagation();
+                        let $this: JQuery = $(this);
+                        miniCartOption.onViewCartElementClicked(miniCartOption, $this);
+                    });
                 }
                 if (!!miniCartOption.proceedToChekcoutElement) {
-                    miniCartOption.renderToElement.on('click', miniCartOption.proceedToChekcoutElement, defaultEventHandler);
+                    miniCartOption.renderToElement.on("click", miniCartOption.proceedToChekcoutElement, function(event: JQueryEventObject){
+                        event.stopPropagation();
+                        let $this: JQuery = $(this);
+                        miniCartOption.onProceedToCheckoutElementClicked(miniCartOption, $this);
+                    });
                 }
                 if (!!miniCartOption.cartItemRemoveElement) {
                     const removeCartItemEventHandler = function(event: JQueryEventObject){
@@ -87,8 +91,8 @@ export class MiniCart extends Cart {
                         let $this: JQuery = $(this);
                         let cartItem = $(this).data("cartitem") as CartItem;
                         miniCartOption.onCartItemRemoveElementClicked(miniCartOption, cartItem, $this);
-                    }
-                    miniCartOption.renderToElement.on('click', miniCartOption.cartItemRemoveElement, removeCartItemEventHandler);
+                    };
+                    miniCartOption.renderToElement.on("click", miniCartOption.cartItemRemoveElement, removeCartItemEventHandler);
                 }
             }catch (error) {
                 console.error(error);

@@ -1,4 +1,4 @@
-export const minicartTemplate =`
+export const minicartTemplate = `
 <a class="p-2 text-dark" href="#" id="mcart-mincart-trigger">
     <i class="fa fa-shopping-cart"></i> Cart
     <span class="badge badge-secondary mcart-mincart-counter"><%= cartItems.length%></span>

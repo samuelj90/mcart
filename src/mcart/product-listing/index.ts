@@ -1,76 +1,52 @@
-import { ProductListingTemplateOptions } from "./product-listing-template-options";
 import { Product } from "./product";
-import { ProductListingOptions } from "./product-listing-options";
+import { ProductListingOption } from "./product-listing-option";
 import { isNullOrUndefined } from "util";
 import { Cart } from "../cart";
-import { defaultProductListingOptions } from "./default-product-listing-options";
-
+import { defaultProductListingOption } from "./default-product-listing-options";
+import *  as ejs from "ejs";
 export class ProductListing {
-    constructor(private productListingOptions: ProductListingOptions) {
-        if (isNullOrUndefined(productListingOptions)) {
-            return;
-        }
-        if (productListingOptions.renderTo.length <= 0) {
-            return;
-        }
-        const combainedProductListingOptions = $.extend({}, defaultProductListingOptions, productListingOptions);
-        this.initializeProductListing(combainedProductListingOptions);
+    constructor(private productListingOptions: ProductListingOption[]) {
+        this.renderProductListing(productListingOptions);
     }
-
-    public initializeProductListing(productListingOptions: ProductListingOptions): void {
-        if (!isNullOrUndefined(productListingOptions.beforeProductListing)) {
-            productListingOptions.beforeProductListing(productListingOptions);
-        }
-        if (productListingOptions.replaceRenderToContents) {
-            productListingOptions.renderTo.html("");
-        }
-        if (isNullOrUndefined(productListingOptions.products)) {
-            $.ajax({
-                type: "GET",
-                url: productListingOptions.endpoints.getProducts,
-                success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
-                    productListingOptions.products = data;
-                    this.renderProductListing(productListingOptions);
-                },
-                dataType : "json"
-            });
-        } else {
-            this.renderProductListing(productListingOptions);
-        }
-    }
-
-    private renderProductListing(productListingOptions: ProductListingOptions) {
-        productListingOptions.products.forEach((product, index, proudcts) => {
-            let templateOptions = productListingOptions.templateOptions;
-            let template = templateOptions.template(templateOptions, product);
-            productListingOptions.renderTo.append(template);
-            productListingOptions.renderTo.find("." + productListingOptions.templateOptions.addToCartBtnElementClass + ":last").data("product", product);
-            productListingOptions.renderTo.find("." + productListingOptions.templateOptions.buyNowBtnElementClass + ":last").data("product", product);
-            if (index === (proudcts.length - 1)) {
-                if (!isNullOrUndefined(productListingOptions.afterProductListing)) {
-                    productListingOptions.afterProductListing(productListingOptions);
+    private renderProductListing(productListingOptions: ProductListingOption[]) {
+        productListingOptions.forEach((productListingOption: ProductListingOption, index: number, productListingOptions: ProductListingOption[]) => {
+            try {
+                if (productListingOption.renderToElement.length <= 0) {
+                    throw new Error(`renderToElement ${productListingOption.renderToElement},  is not found in DOM`);
                 }
-                this.initializeProductListingEventListeners(productListingOptions);
-            }
-        });
-    }
-
-    private initializeProductListingEventListeners(productListingOptions: ProductListingOptions): void {
-        const productListingTemplateOptions = productListingOptions.templateOptions;
-        let addToCartBtnElementSelector: string = "." + productListingTemplateOptions.addToCartBtnElementClass;
-        let buyNowBtnElementSelector: string = "." + productListingTemplateOptions.buyNowBtnElementClass;
-        $("body").on("click", addToCartBtnElementSelector, function (event) {
-            const product: Product = $(event.target).data("product");
-            Cart.insertProductToCart(product, 1);
-            if (!isNullOrUndefined(productListingOptions.onAddToCartBtnClicked)) {
-                productListingOptions.onAddToCartBtnClicked(event, product);
-            }
-        });
-        $("body").on("click", buyNowBtnElementSelector, function (event) {
-            const product: Product = $(event.target).data("product");
-            Cart.insertProductToCart(product, 1);
-            if (!isNullOrUndefined(productListingOptions.onBuyNowBtnClicked)) {
-                productListingOptions.onBuyNowBtnClicked(event);
+                productListingOption = $.extend({}, defaultProductListingOption, productListingOption);
+                if (productListingOption.replaceRenderToElementContent) {
+                    productListingOption.renderToElement.html("");
+                }
+                let products: Product[] = productListingOption.products;
+                let templateData = {
+                    products: products
+                };
+                let template = ejs.compile(productListingOption.template)(templateData);
+                if (!!productListingOption.addToCartElement) {
+                    productListingOption.renderToElement.off("click", productListingOption.addToCartElement);
+                }
+                if (!!productListingOption.buyNowElement) {
+                    productListingOption.renderToElement.off("click", productListingOption.buyNowElement);
+                }
+                if (!!productListingOption.addToCartElement) {
+                    productListingOption.renderToElement.on("click", productListingOption.addToCartElement, function(event: JQueryEventObject){
+                        event.stopPropagation();
+                        let $this: JQuery = $(this);
+                        let product: Product = $(this).data("product");
+                        productListingOption.onAddToCartElementClicked(event, product, $this);
+                    });
+                }
+                if (!!productListingOption.buyNowElement) {
+                    productListingOption.renderToElement.on("click", productListingOption.buyNowElement, function(event: JQueryEventObject){
+                        event.stopPropagation();
+                        let $this: JQuery = $(this);
+                        let product: Product = $(this).data("product");
+                        productListingOption.onBuyNowElementClicked(event, product, $this);
+                    });
+                }
+             } catch (error) {
+                console.error(error);
             }
         });
     }
