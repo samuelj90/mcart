@@ -48,7 +48,7 @@ export class ConfirmationPage {
         }
         let footerData = {
             subTotal: subTotal
-        }
+        };
         let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, cartItems, footerData);
         $("#" + templateOptions.cartItemsFooterContainerId).html(cartItemsFooterTemplate);
         let shippingDetails = this.orderModel.shippingDetails;
@@ -73,7 +73,7 @@ export class ConfirmationPage {
                     let alertMessages = self.createAlert("error", errorThrown);
                     confirmationPageOptions.renderTo.find("#" + templateOptions.alertMessageContainerId).html(alertMessages);
                 }
-            })
+            });
         });
     }
     createAlert(alertType: string, alertMessage: string) {

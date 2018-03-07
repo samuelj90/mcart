@@ -1,7 +1,7 @@
 import { defaultCartOptions } from "./default-cart-options";
 import { CartItem } from "./cart-item";
 import { Product } from "../product-listing/product";
-import { BehaviorSubject } from "rxjs"
+import { BehaviorSubject } from "rxjs";
 import { error } from "util";
 import { isNullOrUndefined } from "../utils";
 import { CartOptions } from "./cart-options";

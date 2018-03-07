@@ -9,29 +9,122 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<%= htmlWebpackPlugin.options.metadata.description %>">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
         crossorigin="anonymous">
-    <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="lib/style.css" />
 </head>
 
 <body>
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-        <h5 class="my-0 mr-md-auto font-weight-normal page-title">
-            <%= htmlWebpackPlugin.options.metadata.pluginName %>
-        </h5>
-        <nav class="my-2 my-md-0 mr-md-3">
+    <nav class="navbar navbar-expand-md bg-white border-bottom box-shadow">
+        <a class="navbar-brand" href="index.html">
+            <%= htmlWebpackPlugin.options.metadata.pluginName.toUpperCase() %>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
             <div id="minicart-container">Mini Cart Container</div>
-        </nav>
-        <!--end navbar-right -->
-    </div>
+        </div>
+
+    </nav>
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">E-COMMERCE CATEGORY</h1>
+            <p class="lead text-muted mb-0">Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression.
+                Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un peintre anonyme
+                assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte...</p>
+        </div>
+    </section>
     <div class="container">
-        <div id="product-listing-container">Product Listing Container</div>
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div id="productlisting-container">Product Listing Container</div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="text-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-lg-4 col-xl-3">
+                    <h5>About</h5>
+                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                    <p class="mb-0">
+                        Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression.
+                    </p>
+                </div>
+
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto">
+                    <h5>Informations</h5>
+                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="">Link 1</a>
+                        </li>
+                        <li>
+                            <a href="">Link 2</a>
+                        </li>
+                        <li>
+                            <a href="">Link 3</a>
+                        </li>
+                        <li>
+                            <a href="">Link 4</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto">
+                    <h5>Others links</h5>
+                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="">Link 1</a>
+                        </li>
+                        <li>
+                            <a href="">Link 2</a>
+                        </li>
+                        <li>
+                            <a href="">Link 3</a>
+                        </li>
+                        <li>
+                            <a href="">Link 4</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4 col-lg-3 col-xl-3">
+                    <h5>Contact</h5>
+                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                    <ul class="list-unstyled">
+                        <li>
+                            <i class="fa fa-home mr-2"></i> My company</li>
+                        <li>
+                            <i class="fa fa-envelope mr-2"></i> email@example.com</li>
+                        <li>
+                            <i class="fa fa-phone mr-2"></i> + 33 12 14 15 16</li>
+                        <li>
+                            <i class="fa fa-print mr-2"></i> + 33 12 14 15 16</li>
+                    </ul>
+                </div>
+                <div class="col-12 copyright mt-3">
+                    <p class="float-left">
+                        <a href="">Back to top</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="lib/scripts.js"></script>
     <script id="minicart" type="text/template" src="lib/minicart-template.js"></script>
 </body>
+
 </html>

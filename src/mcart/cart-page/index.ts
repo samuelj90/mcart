@@ -156,7 +156,7 @@ export class CartPage extends Cart {
                 let returnValue = "";
                 if (arrayOfOptions.length >= 1) {
                     for (let i = 0; i < arrayOfOptions.length; i++) {
-                        returnValue = returnValue + "<option value=\"" + arrayOfOptions[i] + "\">" + arrayOfOptions[i] + "</option>"
+                        returnValue = returnValue + "<option value=\"" + arrayOfOptions[i] + "\">" + arrayOfOptions[i] + "</option>";
                     }
                 }
                 return returnValue;
@@ -183,6 +183,6 @@ export class CartPage extends Cart {
     }
     updateCouponCodeChanged(cartPageOptions: CartPageOptions) {
         let templateOptions = cartPageOptions.templateOptions;
-        this.orderModel.couponCodeDetails = this.getFormData($("#" + templateOptions.couponCodeFormElemtnId))
+        this.orderModel.couponCodeDetails = this.getFormData($("#" + templateOptions.couponCodeFormElemtnId));
     }
 }

@@ -8,12 +8,12 @@ const productListingOption: ProductListingOption = {
     replaceRenderToElementContent: false,
     template: productListingTemplate,
     products: products,
-    addToCartElement: "",
+    addToCartElement: ".mcart-productlisting-addtocart",
     onAddToCartElementClicked: (event, product: Product, $this: JQuery) => {
         $this.data("product");
         Cart.insertProductToCart(product, 1);
     },
-    buyNowElement: "",
+    buyNowElement: ".mcart-productlisting-buynow",
     onBuyNowElementClicked: (event, product: Product, $this: JQuery) => {
         $this.data("product");
         Cart.insertProductToCart(product, 1);

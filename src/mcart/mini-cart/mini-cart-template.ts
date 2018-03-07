@@ -15,7 +15,7 @@ export const minicartTemplate = `
     <ul class="mini-cart-items">
         <% for(var i=0; i < cartItems.length; i++) { %>
             <li class="clearfix">
-                <img src="<%= cartItems[i].item.featuredImage %>" alt="<%= cartItems[i].item.title %>"  style="width:50px;"/>
+                <img src="<%= cartItems[i].item.featuredimage %>" alt="<%= cartItems[i].item.title %>"  style="width:50px;"/>
                 <span class="item-name"><%= cartItems[i].item.title %></span>
                 <span class="item-price">$<%= cartItems[i].item.price %></span>
                 <span class="item-quantity">Quantity: <%= cartItems[i].quantity %></span>

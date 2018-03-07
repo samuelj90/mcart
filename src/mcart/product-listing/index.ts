@@ -22,13 +22,14 @@ export class ProductListing {
                 let templateData = {
                     products: products
                 };
-                let template = ejs.compile(productListingOption.template)(templateData);
                 if (!!productListingOption.addToCartElement) {
                     productListingOption.renderToElement.off("click", productListingOption.addToCartElement);
                 }
                 if (!!productListingOption.buyNowElement) {
                     productListingOption.renderToElement.off("click", productListingOption.buyNowElement);
                 }
+                let template = ejs.compile(productListingOption.template)(templateData);
+                productListingOption.renderToElement.append(template);
                 if (!!productListingOption.addToCartElement) {
                     productListingOption.renderToElement.on("click", productListingOption.addToCartElement, function(event: JQueryEventObject){
                         event.stopPropagation();
