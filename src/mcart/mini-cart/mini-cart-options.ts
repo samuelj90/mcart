@@ -5,6 +5,7 @@ export interface MiniCartOption {
     renderToElement: JQuery;
     replaceRenderToElementContent: boolean;
     triggerElement: string;
+    endpoints: {[key: string]: string};
     viewCartElement?: string;
     proceedToChekcoutElement?: string;
     cartItemRemoveElement?: string;

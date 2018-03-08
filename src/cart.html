@@ -16,18 +16,98 @@
 </head>
 
 <body>
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-        <h5 class="my-0 mr-md-auto font-weight-normal page-title">
-            <%= htmlWebpackPlugin.options.metadata.pluginName %>
-        </h5>
-        <nav class="my-2 my-md-0 mr-md-3">
+    <nav class="navbar navbar-expand-md bg-white border-bottom box-shadow">
+        <a class="navbar-brand" href="index.html">
+            <%= htmlWebpackPlugin.options.metadata.pluginName.toUpperCase() %>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
             <div id="minicart-container">Mini Cart Container</div>
-        </nav>
-        <!--end navbar-right -->
-    </div>
+        </div>
+    </nav>
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">E-COMMERCE CART</h1>
+         </div>
+    </section>
     <div class="container">
-        <div id="cartpage-container">Mini Cart Container</div>
+        <div id="cartpage-container">Cart Page Container</div>
     </div>
+    <!-- Footer -->
+    <footer class="text-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-lg-4 col-xl-3">
+                    <h5>About</h5>
+                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                    <p class="mb-0">
+                        Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression.
+                    </p>
+                </div>
+
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto">
+                    <h5>Informations</h5>
+                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="">Link 1</a>
+                        </li>
+                        <li>
+                            <a href="">Link 2</a>
+                        </li>
+                        <li>
+                            <a href="">Link 3</a>
+                        </li>
+                        <li>
+                            <a href="">Link 4</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto">
+                    <h5>Others links</h5>
+                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="">Link 1</a>
+                        </li>
+                        <li>
+                            <a href="">Link 2</a>
+                        </li>
+                        <li>
+                            <a href="">Link 3</a>
+                        </li>
+                        <li>
+                            <a href="">Link 4</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4 col-lg-3 col-xl-3">
+                    <h5>Contact</h5>
+                    <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
+                    <ul class="list-unstyled">
+                        <li>
+                            <i class="fa fa-home mr-2"></i> My company</li>
+                        <li>
+                            <i class="fa fa-envelope mr-2"></i> email@example.com</li>
+                        <li>
+                            <i class="fa fa-phone mr-2"></i> + 33 12 14 15 16</li>
+                        <li>
+                            <i class="fa fa-print mr-2"></i> + 33 12 14 15 16</li>
+                    </ul>
+                </div>
+                <div class="col-12 copyright mt-3">
+                    <p class="float-left">
+                        <a href="">Back to top</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>

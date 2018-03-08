@@ -14,12 +14,14 @@ export const minicartTemplate = `
     </div>
     <ul class="mini-cart-items">
         <% for(var i=0; i < cartItems.length; i++) { %>
-            <li class="clearfix">
+            <li class="clearfix bg-white border-bottom box-shadow">
                 <img src="<%= cartItems[i].item.featuredimage %>" alt="<%= cartItems[i].item.title %>"  style="width:50px;"/>
                 <span class="item-name"><%= cartItems[i].item.title %></span>
                 <span class="item-price">$<%= cartItems[i].item.price %></span>
                 <span class="item-quantity">Quantity: <%= cartItems[i].quantity %></span>
-                <span class="item-remove badge badge-secondary" data-cartitem="<%=JSON.stringify(cartItems[i])%>"><i class="fa fa-trash"></i></span>
+                <span class="item-remove" data-cartitem="<%=JSON.stringify(cartItems[i])%>">
+                    <i class="fa fa-trash"></i>
+                </span>
             </li>
         <% } %>
     </ul>

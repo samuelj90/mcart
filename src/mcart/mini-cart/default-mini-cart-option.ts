@@ -8,16 +8,19 @@ const miniCartOption: MiniCartOption = {
     replaceRenderToElementContent: false,
     template: minicartTemplate,
     triggerElement: "#mcart-mincart-trigger",
+    endpoints: {
+        cartPageUrl: "/cart.html"
+    },
     onTriggerElementClicked: (miniCartOption: MiniCartOption, $this: JQuery) => {
         miniCartOption.renderToElement.find(".mini-cart").slideToggle( "fast");
     },
     viewCartElement: ".viewCart",
     onViewCartElementClicked: (miniCartOption: MiniCartOption, $this: JQuery) => {
-        window.location.href = "/cart";
+        window.location.href = miniCartOption.endpoints.cartPageUrl;
     },
     proceedToChekcoutElement: ".checkout",
     onProceedToCheckoutElementClicked: (miniCartOption: MiniCartOption, $this: JQuery) => {
-        window.location.href = "/cart";
+        window.location.href = miniCartOption.endpoints.cartPageUrl;
     },
     cartItemRemoveElement: ".item-remove",
     onCartItemRemoveElementClicked: (miniCartOption: MiniCartOption, cartItem: CartItem, $this: JQuery) => {

@@ -4,185 +4,84 @@ import { isNullOrUndefined } from "../utils";
 import { defaultCartPageOptions } from "./default-cart-page-options";
 import { CartItem } from "../cart/cart-item";
 import { Product } from "../product-listing/product";
-import { ShippingDetailsFormModel } from "./shipping-details-form-model";
+import *  as ejs from "ejs";
 
 export class CartPage extends Cart {
     private orderModel: any = {
-        shippingFormValid : false
+        shippingFormValid: false
     };
     constructor(cartPageOptions: CartPageOptions) {
         super();
-        if (isNullOrUndefined(cartPageOptions)) {
-            return;
-        }
-        if (cartPageOptions.renderTo.length <= 0) {
-            return;
-        }
-        cartPageOptions = $.extend({}, defaultCartPageOptions, cartPageOptions);
-        this.initializeCartPage(cartPageOptions);
         const behaviourSubject = this.getCartItemsSubject();
         const self = this;
         behaviourSubject.subscribe(
             function (cartItems: CartItem[]) {
-                console.debug("cartItems >> ", cartItems)
-                self.orderModel.cartItems = cartItems;
-                self.renderCartPage(cartPageOptions, cartItems);
+                self.renderCartItems(cartPageOptions, cartItems);
+                // TODO: Remove unused event bindings.
             },
             function (error) {
-                console.log("Error", error);
+                console.error("Error", error);
             },
             function () {
-                console.debug("Completed");
+                console.debug("Completed behaviour subject subscription");
             }
         );
-        this.initializeEventListerners(cartPageOptions);
-        console.log(behaviourSubject.observers);
     }
-    initializeCartPage(cartPageOptions: CartPageOptions): void {
-        if (cartPageOptions.replaceRenderToContents) {
-            cartPageOptions.renderTo.html("");
-        }
-        let templateOptions = cartPageOptions.templateOptions;
-        let template = templateOptions.template(templateOptions);
-        cartPageOptions.renderTo.append(template);
-    }
-    renderCartPage(cartPageOptions: CartPageOptions, cartItems: CartItem[]): void {
-        // iterate over cart items and display items
-        let templateOptions = cartPageOptions.templateOptions;
-        let cartItemsContainer = $("#" + templateOptions.cartItemsContainerId);
-        let subTotal = 0, cartItemTotalQty = 0;
-        if (cartItems.length === 0) {
-            cartItemsContainer.html("<tr><td colspan=\"5\"><br/><br/><center>No items in Cart</center><br/><br/></td></tr>");
-        } else {
-            cartItemsContainer.html("");
-            cartItems.forEach((cartItem: CartItem, index: number, cartItems: CartItem[]) => {
-                subTotal = subTotal + (cartItem.quantity * cartItem.item.price);
-                cartItemTotalQty = cartItemTotalQty + cartItem.quantity;
-                let template = templateOptions.cartItemTemplate(templateOptions, cartItem, index, cartItems);
-                cartItemsContainer.append(template)
-                cartItemsContainer.find("." + templateOptions.removeItemFromCartBtnElementClass + ":last").data("cartitem", cartItem)
-                cartItemsContainer.find("." + templateOptions.cartItemIncrementerElementClass + ":last").data("cartitem", cartItem)
-                cartItemsContainer.find("." + templateOptions.cartItemDecrementerElementClass + ":last").data("cartitem", cartItem)
+    private renderCartItems(cartPageOptions: CartPageOptions, cartItems: CartItem[]): void {
+        try {
+            if (cartPageOptions.renderToElement.length <= 0) {
+                throw new Error(`renderToElement ${cartPageOptions.renderToElement},  is not found in DOM`);
+            }
+            cartPageOptions = $.extend({}, defaultCartPageOptions, cartPageOptions);
+            if (cartPageOptions.replaceRenderToElementContent) {
+                cartPageOptions.renderToElement.html("");
+            }
+            let subtotal = 0;
+            cartItems.forEach((cartItem: CartItem, index: number) => {
+                subtotal = subtotal + cartItem.item.price * cartItem.quantity;
             });
+            if (!!cartPageOptions.cartFormElement) {
+                cartPageOptions.renderToElement.off("submit", cartPageOptions.cartFormElement);
+            }
+            if (!!cartPageOptions.beforeCartPageRender) {
+                cartPageOptions.beforeCartPageRender(cartPageOptions, cartPageOptions.templateOptions);
+            }
+            let templateData = {
+                cartItems: cartItems,
+                subtotal: subtotal,
+                templateOptions: cartPageOptions.templateOptions
+            };
+            let template = ejs.compile(cartPageOptions.template)(templateData);
+            cartPageOptions.renderToElement.append(template);
+            if (!!cartPageOptions.afterCartPageRender) {
+                cartPageOptions.afterCartPageRender(cartPageOptions, cartPageOptions.templateOptions);
+            }
+            if (!!cartPageOptions.cartFormElement) {
+                let self = this;
+                cartPageOptions.renderToElement.find("form" + cartPageOptions.cartFormElement).on("submit", function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    let $this = $(this);
+                    cartPageOptions.onCartFormSubmit(cartPageOptions, event, $this);
+                });
+            }
+        } catch (error) {
+            console.error(error);
         }
-        let footerData = {
-            subTotal: subTotal
-        }
-        let cartItemsFooterTemplate = templateOptions.cartItemsFooterTemplate(templateOptions, cartItems, footerData);
-        $("#" + templateOptions.cartItemsFooterContainerId).html(cartItemsFooterTemplate);
-        let shippingDetailsFormModel: ShippingDetailsFormModel = this.loadShippingDetailsFormModel(cartPageOptions);
-        let shippingDetailsFormTemplate = templateOptions.shippingDetailsFormTemplate(templateOptions, shippingDetailsFormModel);
-        $("#" + templateOptions.shippingDetailsFormContainerId).html(shippingDetailsFormTemplate);
-        let couponCodeFormTemplate = templateOptions.couponCodeFormTemplate(templateOptions);
-        $("#" + templateOptions.couponCodeFormContainerId).html(couponCodeFormTemplate);
     }
-    initializeEventListerners(cartPageOptions: CartPageOptions): void {
-        let self = this;
-        let templateOptions = cartPageOptions.templateOptions;
-        let cartItemsContainer = cartPageOptions.renderTo.find("#" + templateOptions.cartItemsContainerId);
-        cartPageOptions.renderTo.on("click", ("." + templateOptions.removeItemFromCartBtnElementClass), function () {
-            console.debug("." + templateOptions.removeItemFromCartBtnElementClass + " clicked");
-            let cartItem: CartItem = $(this).data("cartitem");
-            if (!cartPageOptions.overideOnCartItemRemoveBtnClicked) {
-                Cart.removeCartItemFromCart(cartItem);
-            }
-            if (!isNullOrUndefined(cartPageOptions.onCartItemRemoveBtnClicked)) {
-                cartPageOptions.onCartItemRemoveBtnClicked(cartPageOptions, cartItem);
-            }
-        });
-        cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemIncrementerElementClass), function () {
-            let cartItem: CartItem = $(this).data("cartitem");
-            let product: Product = cartItem.item;
-            Cart.insertProductToCart(product, 1);
-        });
-        cartPageOptions.renderTo.on("click", ("." + templateOptions.cartItemDecrementerElementClass), function () {
-            let cartItem: CartItem = $(this).data("cartitem");
-            let product: Product = cartItem.item;
-            Cart.removeProductFromCart(product, 1);
-        });
-        cartPageOptions.renderTo.on("submit", ("#" + templateOptions.shippingDetailsFormElemtnId), function (event) {
-            event.preventDefault();
-            console.debug("Shipping details form submitted");
-            self.updateCartTotalsOnShippingDetailsChanged(cartPageOptions);
-            self.orderModel.shippingFormValid = true;
-        });
-        cartPageOptions.renderTo.on("submit", ("#" + templateOptions.couponCodeFormElemtnId), function (event) {
-            event.preventDefault();
-            console.debug("Coupon code form submitted");
-            self.updateCouponCodeChanged(cartPageOptions);
-        });
-        cartPageOptions.renderTo.on("change", ("#" + templateOptions.shippingDetailsFormCountryElemtnId), function () {
-            let shippingDetailsFormModel = self.loadShippingDetailsFormModel(cartPageOptions);
-            let states = shippingDetailsFormModel.states[$(this).find("option:selected").val()]
-            $(("#" + templateOptions.shippingDetailsFormStateElemtnId)).html("<option selected value=\"\"> Select a State</option> " + shippingDetailsFormModel.convertArrayToOptions(states));
-        })
-        cartPageOptions.renderTo.on("click", "#" + templateOptions.checkoutBtnId, function(){
-            cartPageOptions.renderTo.find("#" + templateOptions.couponCodeFormElemtnId).submit();
-            let alertMessages = ""
-            console.log(self.orderModel.cartItems);
-            if (self.orderModel.cartItems.length < 1) {
-                alertMessages = alertMessages + self.createAlert("error", "Cart items is empty");
-            }
-            console.log(self.orderModel.shippingDetails);
-            if (!self.orderModel.shippingFormValid) {
-                alertMessages = alertMessages + self.createAlert("error", "Shipping details is not valid or pls submit shipping details");
-            }
-            if (alertMessages === "") {
-                /*$.ajax({
-                    type: 'POST',
-                    url: cartPageOptions.createOrderUrl,
-                    data: self.orderModel,
-                    success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
-                        self.orderModel.orderId = data.orderId;*/
-                        localStorage.setItem("mcart-order-model", JSON.stringify(self.orderModel));
-                        window.location.href = cartPageOptions.checkoutConfirmUrl;
-                    /*},
-                    error: (jqXHR: JQueryXHR, textStatus: string, errorThrown: string) => {
-                        console.log(jqXHR,textStatus,errorThrown)
-                    },
-                    dataType : "json"
-                });*/
-            }
-            cartPageOptions.renderTo.find("#" + templateOptions.alertMessageContainerId).html(alertMessages);
-        });
-    }
-    loadShippingDetailsFormModel(cartPageOptions: CartPageOptions): ShippingDetailsFormModel {
-        return {
-            countries: ["Australia"],
-            states: {
-                "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast–Tweed Heads", "Newcastle–Maitland", "Canberra–Queanbeyan", "Sunshine Coast", "Wollongong", "Hobart", "Geelong", "Townsville", "Cairns", "Darwin", "Toowoomba", "Ballarat", "Bendigo", "Albury–Wodonga", "Launceston", "Mackay", "Rockhampton", "Bunbury", "Bundaberg", "Coffs Harbour", "Wagga Wagga", "Hervey Bay", "Mildura–Wentworth", "Shepparton–Mooroopna", "Port Macquarie", "Gladstone–Tannum Sands", "Tamworth", "Traralgon–Morwell", "Orange", "Bowral–Mittagong", "Geraldton", "Busselton", "Dubbo", "Nowra–Bomaderry", "Bathurst", "Warragul–Drouin", "Warrnambool", "Albany", "Kalgoorlie–Boulder", "Devonport"]
-            },
-            convertArrayToOptions: function (arrayOfOptions) {
-                let returnValue = "";
-                if (arrayOfOptions.length >= 1) {
-                    for (let i = 0; i < arrayOfOptions.length; i++) {
-                        returnValue = returnValue + "<option value=\"" + arrayOfOptions[i] + "\">" + arrayOfOptions[i] + "</option>";
-                    }
+    /* private serializeFormData($form): any {
+        let formData = {};
+        let formArray = $form.serializeArray();
+        $.each(formArray, function() {
+            if (formData[this.name]) {
+                if (!formData[this.name].push) {
+                    formData[this.name] = [formData[this.name]];
                 }
-                return returnValue;
+                formData[this.name].push(this.value || "");
+            } else {
+                formData[this.name] = this.value || "";
             }
-        };
-    }
-    updateCartTotalsOnShippingDetailsChanged(cartPageOptions: CartPageOptions) {
-        let templateOptions = cartPageOptions.templateOptions;
-        this.orderModel.shippingDetails = this.getFormData($("#" + templateOptions.shippingDetailsFormElemtnId))
-    }
-    getFormData($form) {
-        let unindexed_array = $form.serializeArray();
-        let indexed_array = {};
-        $.map(unindexed_array, function(n, i){
-            indexed_array[n["name"]] = n["value"];
         });
-        return indexed_array;
-    }
-    createAlert(alertType: string, alertMessage: string) {
-        return "<div class=\"alert alert-danger alert-dismissible\">" +
-        "    <a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">×</a>" +
-        alertMessage +
-        "  </div>";
-    }
-    updateCouponCodeChanged(cartPageOptions: CartPageOptions) {
-        let templateOptions = cartPageOptions.templateOptions;
-        this.orderModel.couponCodeDetails = this.getFormData($("#" + templateOptions.couponCodeFormElemtnId));
-    }
+        return formData;
+    } */
 }
