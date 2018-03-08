@@ -5,6 +5,7 @@ import { defaultCartPageOptions } from "./default-cart-page-options";
 import { CartItem } from "../cart/cart-item";
 import { Product } from "../product-listing/product";
 import *  as ejs from "ejs";
+import { RenderToElementNotFound } from "../render-to-element-notfound";
 
 export class CartPage extends Cart {
     private orderModel: any = {
@@ -30,7 +31,7 @@ export class CartPage extends Cart {
     private renderCartItems(cartPageOptions: CartPageOptions, cartItems: CartItem[]): void {
         try {
             if (cartPageOptions.renderToElement.length <= 0) {
-                throw new Error(`renderToElement ${cartPageOptions.renderToElement},  is not found in DOM`);
+                throw new RenderToElementNotFound(cartPageOptions.renderToElement, "renderToElement of cartpage is not found in DOM");
             }
             cartPageOptions = $.extend({}, defaultCartPageOptions, cartPageOptions);
             if (cartPageOptions.replaceRenderToElementContent) {
@@ -66,7 +67,7 @@ export class CartPage extends Cart {
                 });
             }
         } catch (error) {
-            console.error(error);
+            console.debug(error);
         }
     }
     /* private serializeFormData($form): any {

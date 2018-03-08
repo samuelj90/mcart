@@ -12,6 +12,7 @@ export const defaultCartPageOptions: CartPageOptions = {
     onCartFormSubmit: (cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) => {
         localStorage.setItem("coupondetails", "");
         localStorage.setItem("shippingdetails", "");
+        cartPageOptions.renderToElement.find("input, select, textarea").attr("readonly", "readonly");
         // window.location.href = cartPageOptions.endpoints.confirmationPageUrl;
     }
 };

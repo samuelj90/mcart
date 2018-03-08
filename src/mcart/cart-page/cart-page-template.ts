@@ -1,6 +1,6 @@
 export const cartPageTemplate = `
 <div class="container mb-4">
-    <form id="mcart-cartpage-form">
+    <form id="mcart-cartpage-form" autocomplete="on">
     <div class="row">
         <div class="col-12">
             <div class="table-responsive">
@@ -72,7 +72,7 @@ export const cartPageTemplate = `
                 <div class="card-body">
                 <div class="form-group">
                     <label for="Coupon Code">Coupon Code</label>
-                    <input type="text" class="form-control" name="couponcodeDetails[couponcode]"  placeholder="Enter coupon code">
+                    <input type="text" class="form-control" name="couponcodeDetails[couponcode]"  placeholder="Enter coupon code" autocomplet="off">
                 </div>
                 <div class="mx-auto">
                     <button type="submit" class="btn btn-primary text-right">Update</button>
@@ -90,36 +90,36 @@ export const cartPageTemplate = `
                     <div class="col-6">
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" name="shippingDetails[name]" aria-describedby="emailHelp" placeholder="Enter name" required>
+                            <input type="text" class="form-control" name="shippingDetails[name]" autocomplete='name' placeholder="Enter name" required>
                         </div>
                         <div class="form-group">
                             <label for="email">Email address</label>
-                            <input type="email" class="form-control" name="shippingDetails[email]"  aria-describedby="emailHelp" placeholder="Enter email" required>
+                            <input type="email" class="form-control" name="shippingDetails[email]"  autocomplete='email' placeholder="Enter email" required>
                             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                         </div>
                         <div class="form-group">
                             <label for="message">Address</label>
-                            <textarea class="form-control" name="shippingDetails[address]" rows="2" required placeholder="Enter Address"></textarea>
+                            <textarea class="form-control" name="shippingDetails[address]" rows="2"  autocomplete='address' placeholder="Enter Address" required></textarea>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
                             <label for="name">Country</label>
-                            <select name="shippingDetails[country]" class="form-control w-100" required="">
+                            <select name="shippingDetails[country]" class="form-control w-100" autocomplete='country-name' required>
                                 <option value="">Choose...</option>
                                 <option>United States</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="name">State</label>
-                            <select name="shippingDetails[state]" class="form-control w-100" required="">
+                            <select name="shippingDetails[state]" class="form-control w-100"  autocomplete='address-level1' required>
                                 <option value="">Choose...</option>
                                 <option>United States</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="name">Phone</label>
-                            <input type="text" class="form-control" name="shippingDetails[phone]" placeholder="Enter Phone" required>
+                            <input type="text" class="form-control" name="shippingDetails[phone]" autocomplete='tel' placeholder="Enter Phone" required>
                         </div>
                         <div class="mx-auto">
                             <button class="btn btn-primary text-right">Update totals</button>

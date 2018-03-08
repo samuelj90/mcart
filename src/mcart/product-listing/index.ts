@@ -1,3 +1,4 @@
+import { RenderToElementNotFound } from "../render-to-element-notfound";
 import { Product } from "./product";
 import { ProductListingOption } from "./product-listing-option";
 import { isNullOrUndefined } from "util";
@@ -12,7 +13,7 @@ export class ProductListing {
         productListingOptions.forEach((productListingOption: ProductListingOption, index: number, productListingOptions: ProductListingOption[]) => {
             try {
                 if (productListingOption.renderToElement.length <= 0) {
-                    throw new Error(`renderToElement ${productListingOption.renderToElement},  is not found in DOM`);
+                    throw new RenderToElementNotFound(productListingOption.renderToElement, "renderToElement of product listing is not found in DOM");
                 }
                 productListingOption = $.extend({}, defaultProductListingOption, productListingOption);
                 if (productListingOption.replaceRenderToElementContent) {
@@ -47,7 +48,7 @@ export class ProductListing {
                     });
                 }
              } catch (error) {
-                console.error(error);
+                console.debug(error);
             }
         });
     }

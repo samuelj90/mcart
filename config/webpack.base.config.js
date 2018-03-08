@@ -66,8 +66,7 @@ module.exports = function (env) {
             new CopyWebpackPlugin([
                 {from: './node_modules/jquery/dist/jquery.js', to: './lib/jquery.js'},
                 {from: './src/scripts.js', to: './lib/scripts.js'},
-                {from: './src/style.css', to: './lib/style.css'},
-                {from: './src/proudcts.json', to: './lib/proudcts.json'}
+                {from: './src/style.css', to: './lib/style.css'}
             ]),
 
             // insert bundled script and metadata into index.html
@@ -79,6 +78,11 @@ module.exports = function (env) {
             new HtmlWebpackPlugin({
                 template: 'src/cart.html',
                 filename: 'cart.html',
+                metadata: METADATA
+            }),
+            new HtmlWebpackPlugin({
+                template: 'src/confirmation.html',
+                filename: 'confirmation.html',
                 metadata: METADATA
             })
         ],

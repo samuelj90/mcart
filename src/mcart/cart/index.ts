@@ -47,8 +47,8 @@ export class Cart {
                     value.quantity = value.quantity + count;
                     return true;
                 }
-                return false
-            }).reduce(function(pre, cur) {return pre || cur}, false);
+                return false;
+            }).reduce(function(pre, cur) {return pre || cur; }, false);
             if (isItemExist) {
                 Cart.upateBehaviourSubjectAndSyncing();
                 return;
@@ -58,7 +58,7 @@ export class Cart {
             title: product.title,
             item: product,
             quantity: count
-        }
+        };
         this.cartItems.push(cartItem);
         Cart.upateBehaviourSubjectAndSyncing();
     }
@@ -82,8 +82,8 @@ export class Cart {
                     throw new RangeError("Invalid number of product requested to remove");
                 }
             }
-            return false
-        }).reduce(function(pre, cur) {return pre || cur}, false);
+            return false;
+        }).reduce(function(pre, cur) {return pre || cur; }, false);
         if (isItemExist) {
             Cart.upateBehaviourSubjectAndSyncing();
             return;
