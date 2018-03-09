@@ -26,19 +26,19 @@ export const cartPageTemplate = `
                             <td>
                                 <div style="width:140px; float:right">
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-minus"></i></span>
+                                        <div class="input-group-prepend mcart-cartpage-cartitem-decrementer" data-cartitem="<%= JSON.stringify(cartItem) %>">
+                                            <span class="input-group-text"><i class="fa fa-minus"></i></span>
                                         </div>
-                                        <input class="form-control" readonly type="number" name="cartItem[<%= index %>][quantity]"  value="<%= cartItem.quantity %>"/>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-plus"></i></span>
+                                        <input class="form-control mcart-cartpage-cartitem-quantity" readonly type="number" name="cartItem[<%= index %>][quantity]"  value="<%= cartItem.quantity %>"/>
+                                        <div class="input-group-append mcart-cartpage-cartitem-incrementer" data-cartitem="<%= JSON.stringify(cartItem) %>">
+                                            <span class="input-group-text"><i class="fa fa-plus"></i></span>
                                         </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="text-right">$ <%= cartItem.item.price %></td>
                             <td class="text-right">
-                                <button class="btn btn-sm btn-danger cartpage-caritem-remove" data-cartitem="<%= JSON.stringify(cartItem) %>">
+                                <button class="btn btn-sm btn-danger mcart-cartpage-cartitem-remove" data-cartitem="<%= JSON.stringify(cartItem) %>">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
@@ -49,15 +49,19 @@ export const cartPageTemplate = `
                             <td colspan="2" class="text-right"> $ <%= subtotal %></td>
                         </tr>
                         <tr>
-                            <td colspan="3" class="text-right">Shipping</td>
-                            <td colspan="2" class="text-right">6,90 €</td>
+                            <td colspan="3" class="text-right">Tax</td>
+                            <td colspan="2" class="text-right">$ <%= subtotal/10 %></td>
                         </tr>
+                        <tr>
+                        <td colspan="3" class="text-right">Shipping</td>
+                        <td colspan="2" class="text-right">$ <%= shipping = 0 %></td>
+                    </tr>
                         <tr>
                             <td colspan="3" class="text-right">
                                 <strong>Total</strong>
                             </td>
                             <td colspan="2" class="text-right">
-                                <strong>346,90 €</strong>
+                                <strong>$ <%= shipping + subtotal + subtotal/10 %></strong>
                             </td>
                         </tr>
                     </tbody>

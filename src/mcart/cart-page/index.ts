@@ -44,6 +44,15 @@ export class CartPage extends Cart {
             if (!!cartPageOptions.cartFormElement) {
                 cartPageOptions.renderToElement.off("submit", cartPageOptions.cartFormElement);
             }
+            if (!!cartPageOptions.cartItemIncrementerElement) {
+                cartPageOptions.renderToElement.off("click", cartPageOptions.cartItemIncrementerElement);
+            }
+            if (!!cartPageOptions.cartItemDecrementerElement) {
+                cartPageOptions.renderToElement.off("click", cartPageOptions.cartItemDecrementerElement);
+            }
+            if (!!cartPageOptions.cartItemRemoveElement) {
+                cartPageOptions.renderToElement.off("click", cartPageOptions.cartItemRemoveElement);
+            }
             if (!!cartPageOptions.beforeCartPageRender) {
                 cartPageOptions.beforeCartPageRender(cartPageOptions, cartPageOptions.templateOptions);
             }
@@ -64,6 +73,34 @@ export class CartPage extends Cart {
                     event.stopPropagation();
                     let $this = $(this);
                     cartPageOptions.onCartFormSubmit(cartPageOptions, event, $this);
+                });
+            }
+            let cartRefernce = Cart;
+            if (!!cartPageOptions.cartItemIncrementerElement) {
+                cartPageOptions.renderToElement.on("click", cartPageOptions.cartItemIncrementerElement, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    let $this = $(this);
+                    let cartItem = $this.data("cartitem") as CartItem;
+                    cartPageOptions.onCartItemIncrementerElementClicked(cartPageOptions, cartItem, event, $this);
+                });
+            }
+            if (!!cartPageOptions.cartItemDecrementerElement) {
+                cartPageOptions.renderToElement.on("click", cartPageOptions.cartItemDecrementerElement, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    let $this = $(this);
+                    let cartItem = $this.data("cartitem") as CartItem;
+                    cartPageOptions.onCartItemDecrementerElementClicked(cartPageOptions, cartItem, event, $this);
+                });
+            }
+            if (!!cartPageOptions.cartItemRemoveElement) {
+                cartPageOptions.renderToElement.on("click", cartPageOptions.cartItemRemoveElement, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    let $this = $(this);
+                    let cartItem = $this.data("cartitem") as CartItem;
+                    cartPageOptions.onCartItemRemoveElementClicked(cartPageOptions, cartItem, event, $this);
                 });
             }
         } catch (error) {

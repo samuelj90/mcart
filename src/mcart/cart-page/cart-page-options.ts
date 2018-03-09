@@ -1,4 +1,5 @@
 import { CartItem } from "../cart/cart-item";
+import { Cart } from "../cart";
 
 export interface CartPageOptions {
     renderToElement: JQuery;
@@ -11,8 +12,9 @@ export interface CartPageOptions {
     cartFormElement: string;
     onCartFormSubmit: (cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) => void;
     cartItemIncrementerElement?: string;
-    onCartItemIncrementerElementClicked?: (cartItemQuantityElement, event: JQueryEventObject, $this: JQuery) => void;
-    cartItemQuantityElement?: string;
+    onCartItemIncrementerElementClicked?: (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
     cartItemDecrementerElement?: string;
-    onCartItemDecrementerElementClicked?: (cartItemQuantityElement, event: JQueryEventObject, $this: JQuery) => void;
+    onCartItemDecrementerElementClicked?: (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
+    cartItemRemoveElement?: string;
+    onCartItemRemoveElementClicked?: (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
 }
