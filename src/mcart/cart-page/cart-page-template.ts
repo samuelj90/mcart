@@ -1,4 +1,9 @@
 export const cartPageTemplate = `
+<% var cartItems = cartModel.cartItems %>
+<% var cartItemsTotal = cartModel.cartItemsTotal %>
+<% var shippingDetails = cartModel.shippingDetails %>
+<% var couponDetails = cartModel.couponDetails %>
+<% var taxAmount = cartModel.taxAmount %>
 <div class="container mb-4">
     <form id="mcart-cartpage-form" autocomplete="on">
     <div class="row">
@@ -44,24 +49,27 @@ export const cartPageTemplate = `
                             </td>
                         </tr>
                         <%})%>
-                        <tr>
-                            <td colspan="3" class="text-right">Sub-Total</td>
-                            <td colspan="2" class="text-right"> $ <%= subtotal %></td>
+                        <% if(cartItems.length <= 0) { %>
+                            <tr><td colspan="5">No Items in the cart</td></tr>
+                        <% } %>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-right">Sub Total</td>
+                            <td colspan="2" class="text-right"> $ <%= cartItemsTotal %></td>
                         </tr>
-                        <tr>
+                        <tr class="table-light">
                             <td colspan="3" class="text-right">Tax</td>
-                            <td colspan="2" class="text-right">$ <%= subtotal/10 %></td>
+                            <td colspan="2" class="text-right">$ <%= taxAmount %></td>
                         </tr>
-                        <tr>
-                        <td colspan="3" class="text-right">Shipping</td>
-                        <td colspan="2" class="text-right">$ <%= shipping = 0 %></td>
-                    </tr>
-                        <tr>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-right">Shipping</td>
+                            <td colspan="2" class="text-right">$ <%= shippingDetails.shippingCharge %></td>
+                        </tr>
+                        <tr class="table-light">
                             <td colspan="3" class="text-right">
                                 <strong>Total</strong>
                             </td>
                             <td colspan="2" class="text-right">
-                                <strong>$ <%= shipping + subtotal + subtotal/10 %></strong>
+                                <strong>$ <%=  cartItemsTotal + taxAmount + shippingDetails.shippingCharge %></strong>
                             </td>
                         </tr>
                     </tbody>
@@ -74,12 +82,16 @@ export const cartPageTemplate = `
                     <i class="fa fa-beer"></i> Coupon Details.
                 </div>
                 <div class="card-body">
-                <div class="form-group">
-                    <label for="Coupon Code">Coupon Code</label>
-                    <input type="text" class="form-control" name="couponcodeDetails[couponcode]"  placeholder="Enter coupon code" autocomplet="off">
-                </div>
-                <div class="mx-auto">
-                    <button type="submit" class="btn btn-primary text-right">Update</button>
+                <div class="row" id="mcart-cartpage-couponform">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="Coupon Code">Coupon Code</label>
+                            <input type="text" class="form-control" name="couponcodeDetails[couponcode]"  placeholder="Enter coupon code" autocomplet="off">
+                        </div>
+                        <div class="mx-auto">
+                            <button type="submit" class="btn btn-primary text-right" id="<%= templateOptions.couponFormSubmitBtn %>">Update</button>
+                        </div>
+                    </div>
                 </div>
                 </div>
             </div>
@@ -90,7 +102,7 @@ export const cartPageTemplate = `
                     <i class="fa fa-envelope"></i> Shipping Details.
                 </div>
                 <div class="card-body">
-                <div class="row">
+                <div class="row" id="mcart-cartpage-shippingform">
                     <div class="col-6">
                         <div class="form-group">
                             <label for="name">Name</label>
@@ -126,7 +138,7 @@ export const cartPageTemplate = `
                             <input type="text" class="form-control" name="shippingDetails[phone]" autocomplete='tel' placeholder="Enter Phone" required>
                         </div>
                         <div class="mx-auto">
-                            <button class="btn btn-primary text-right">Update totals</button>
+                            <button class="btn btn-primary text-right" id="<%= templateOptions.shippingFormSubmitBtn %>">Update totals</button>
                         </div>
                     </div>
                 </div>
@@ -136,7 +148,7 @@ export const cartPageTemplate = `
         <div class="col-12" style="margin-top: 20px;">
             <div class="row">
                 <div class="col-sm-12  col-md-6">
-                    <button class="btn btn-lg btn-block btn-light">Continue Shopping</button>
+                    <a class="btn btn-lg btn-block btn-light" href="index.html">Continue Shopping</a>
                 </div>
                 <div class="col-sm-12 col-md-6 text-right">
                     <button type="submit" class="btn btn-lg btn-block btn-success text-uppercase">Checkout</button>

@@ -1,8 +1,7 @@
+import { CartModel } from "./cart-model";
 export interface CartOptions {
-    localSyncingEnabled: boolean,
-    remoteSyncingEnabled: boolean,
-    endpoints?: {
-        getCartItems: string,
-        addItemToCart: string,
-    }
+    localSyncingEnabled: boolean;
+    remoteSyncingEnabled: boolean;
+    calculateShippingCharge?: (cartModel: CartModel) => number;
+    calculateTaxAmount?: (cartModel: CartModel) => number;
 }

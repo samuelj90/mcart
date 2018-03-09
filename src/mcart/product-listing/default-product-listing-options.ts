@@ -11,12 +11,12 @@ const productListingOption: ProductListingOption = {
     addToCartElement: ".mcart-productlisting-addtocart",
     onAddToCartElementClicked: (event, product: Product, $this: JQuery) => {
         $this.data("product");
-        Cart.insertProductToCart(product, 1);
+        Cart.getInstance().insertProductToCart(product, 1);
     },
     buyNowElement: ".mcart-productlisting-buynow",
     onBuyNowElementClicked: (event, product: Product, $this: JQuery) => {
         $this.data("product");
-        Cart.insertProductToCart(product, 1);
+        Cart.getInstance().insertProductToCart(product, 1);
         window.location.href = "/cart";
     }
 };

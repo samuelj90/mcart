@@ -36,7 +36,7 @@ export class MCart {
     }
 
     private initializeCart(): void  {
-        new Cart(this.options.cart);
+        Cart.getInstance(this.options.cart);
     }
 
     private initializeMiniCart(): void  {

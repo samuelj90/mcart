@@ -1,4 +1,6 @@
 export const minicartTemplate = `
+<% var cartItems = cartModel.cartItems %>
+<% var cartItemsTotal = cartModel.cartItemsTotal %>
 <a class="p-2 text-dark" href="#" id="mcart-mincart-trigger">
     <i class="fa fa-shopping-cart"></i> Cart
     <span class="badge badge-secondary mcart-mincart-counter"><%= cartItems.length%></span>
@@ -9,7 +11,7 @@ export const minicartTemplate = `
         <span class="badge badge-secondary mcart-mincart-counter"><%= cartItems.length%></span>
         <div class="mini-cart-total">
             <span class="lighter-text">Total:</span>
-            <span class="main-color-text"><%= total %></span>
+            <span class="main-color-text"><%= cartItemsTotal %></span>
         </div>
     </div>
     <ul class="mini-cart-items">

@@ -1,3 +1,4 @@
+import { CartModel } from "../cart/cart-model";
 import { Cart } from "../cart";
 import { CartPageOptions } from "./cart-page-options";
 import { isNullOrUndefined } from "../utils";
@@ -7,17 +8,16 @@ import { Product } from "../product-listing/product";
 import *  as ejs from "ejs";
 import { RenderToElementNotFound } from "../render-to-element-notfound";
 
-export class CartPage extends Cart {
+export class CartPage {
     private orderModel: any = {
         shippingFormValid: false
     };
     constructor(cartPageOptions: CartPageOptions) {
-        super();
-        const behaviourSubject = this.getCartItemsSubject();
+        const behaviourSubject = Cart.getInstance().getCartModelSubject();
         const self = this;
         behaviourSubject.subscribe(
-            function (cartItems: CartItem[]) {
-                self.renderCartItems(cartPageOptions, cartItems);
+            function (cartModel: CartModel) {
+                self.renderCartPage(cartPageOptions, cartModel);
                 // TODO: Remove unused event bindings.
             },
             function (error) {
@@ -28,7 +28,7 @@ export class CartPage extends Cart {
             }
         );
     }
-    private renderCartItems(cartPageOptions: CartPageOptions, cartItems: CartItem[]): void {
+    private renderCartPage(cartPageOptions: CartPageOptions, cartModel: CartModel): void {
         try {
             if (cartPageOptions.renderToElement.length <= 0) {
                 throw new RenderToElementNotFound(cartPageOptions.renderToElement, "renderToElement of cartpage is not found in DOM");
@@ -37,10 +37,6 @@ export class CartPage extends Cart {
             if (cartPageOptions.replaceRenderToElementContent) {
                 cartPageOptions.renderToElement.html("");
             }
-            let subtotal = 0;
-            cartItems.forEach((cartItem: CartItem, index: number) => {
-                subtotal = subtotal + cartItem.item.price * cartItem.quantity;
-            });
             if (!!cartPageOptions.cartFormElement) {
                 cartPageOptions.renderToElement.off("submit", cartPageOptions.cartFormElement);
             }
@@ -57,8 +53,7 @@ export class CartPage extends Cart {
                 cartPageOptions.beforeCartPageRender(cartPageOptions, cartPageOptions.templateOptions);
             }
             let templateData = {
-                cartItems: cartItems,
-                subtotal: subtotal,
+                cartModel: cartModel,
                 templateOptions: cartPageOptions.templateOptions
             };
             let template = ejs.compile(cartPageOptions.template)(templateData);

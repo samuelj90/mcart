@@ -6,7 +6,7 @@ export interface CartPageOptions {
     replaceRenderToElementContent: boolean;
     template: string;
     endpoints: {[key: string]: string};
-    templateOptions?: {[key: string]: string};
+    templateOptions?: {[key: string]: any};
     beforeCartPageRender?: (cartPageOptions: CartPageOptions, templateOptions: {[key: string]: string}) => void;
     afterCartPageRender?: (cartPageOptions: CartPageOptions, templateOptions: {[key: string]: string}) => void;
     cartFormElement: string;

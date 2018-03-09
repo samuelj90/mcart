@@ -24,7 +24,7 @@ const miniCartOption: MiniCartOption = {
     },
     cartItemRemoveElement: ".item-remove",
     onCartItemRemoveElementClicked: (miniCartOption: MiniCartOption, cartItem: CartItem, $this: JQuery) => {
-        Cart.removeCartItemFromCart(cartItem);
+        Cart.getInstance().removeCartItemFromCart(cartItem);
     }
 };
 

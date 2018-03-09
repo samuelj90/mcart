@@ -1,3 +1,4 @@
+import { CartModel } from "./../cart/cart-model";
 import { error } from "util";
 import { MiniCartOption } from "./mini-cart-options";
 import { isNullOrUndefined } from "../utils";
@@ -11,16 +12,15 @@ import *  as ejs from "ejs";
  * - Should have multiple cart items counter and multiple totals
  * - May or maynot have checkout and view cart buttons
  */
-export class MiniCart extends Cart {
+export class MiniCart {
     private cartItems: CartItem[];
 
     constructor(private miniCartOptions: MiniCartOption[]) {
-        super();
-        const behaviourSubject = this.getCartItemsSubject();
+        const behaviourSubject = Cart.getInstance().getCartModelSubject();
         const self = this;
         behaviourSubject.subscribe(
-            function (cartItems: CartItem[]) {
-                self.renderMiniCartItems(miniCartOptions, cartItems);
+            function (cartModel: CartModel) {
+                self.renderMiniCart(miniCartOptions, cartModel);
                 // TODO: Remove unused event bindings.
             },
             function (error) {
@@ -32,7 +32,7 @@ export class MiniCart extends Cart {
         );
     }
 
-    private renderMiniCartItems(miniCartOptions: MiniCartOption[], cartItems: CartItem[]): void {
+    private renderMiniCart(miniCartOptions: MiniCartOption[], cartModel: CartModel): void {
         miniCartOptions.forEach((miniCartOption: MiniCartOption, index: number, miniCartOptions: MiniCartOption[]) => {
             try {
                 if (miniCartOption.renderToElement.length <= 0) {
@@ -42,13 +42,8 @@ export class MiniCart extends Cart {
                 if (miniCartOption.replaceRenderToElementContent) {
                     miniCartOption.renderToElement.html("");
                 }
-                let total = 0;
-                cartItems.forEach((cartItem: CartItem, index: number) => {
-                    total = total + cartItem.item.price * cartItem.quantity;
-                });
                 let templateData = {
-                    cartItems: cartItems,
-                    total: total
+                    cartModel: cartModel
                 };
                 let template = ejs.compile(miniCartOption.template)(templateData);
                 if (!!miniCartOption.triggerElement) {
