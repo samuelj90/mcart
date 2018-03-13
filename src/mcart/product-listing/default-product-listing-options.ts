@@ -8,13 +8,16 @@ const productListingOption: ProductListingOption = {
     replaceRenderToElementContent: false,
     template: productListingTemplate,
     products: products,
+    endpoints: {
+        cartPageUrl: "/cart.html"
+    },
     addToCartElement: ".mcart-productlisting-addtocart",
-    onAddToCartElementClicked: (event, product: Product, $this: JQuery) => {
+    onAddToCartElementClicked: (productListingOptions, event, product: Product, $this: JQuery) => {
         $this.data("product");
         Cart.getInstance().insertProductToCart(product, 1);
     },
     buyNowElement: ".mcart-productlisting-buynow",
-    onBuyNowElementClicked: (event, product: Product, $this: JQuery) => {
+    onBuyNowElementClicked: (productListingOptions, event, product: Product, $this: JQuery) => {
         $this.data("product");
         Cart.getInstance().insertProductToCart(product, 1);
         window.location.href = "/cart";

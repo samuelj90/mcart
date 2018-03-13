@@ -36,7 +36,7 @@ export class ProductListing {
                         event.stopPropagation();
                         let $this: JQuery = $(this);
                         let product: Product = $(this).data("product");
-                        productListingOption.onAddToCartElementClicked(event, product, $this);
+                        productListingOption.onAddToCartElementClicked(productListingOption, event, product, $this);
                     });
                 }
                 if (!!productListingOption.buyNowElement) {
@@ -44,7 +44,7 @@ export class ProductListing {
                         event.stopPropagation();
                         let $this: JQuery = $(this);
                         let product: Product = $(this).data("product");
-                        productListingOption.onBuyNowElementClicked(event, product, $this);
+                        productListingOption.onBuyNowElementClicked(productListingOption, event, product, $this);
                     });
                 }
              } catch (error) {

@@ -7,22 +7,24 @@ const miniCartOption: MiniCartOption = {
     renderToElement: jQuery("body"),
     replaceRenderToElementContent: false,
     template: minicartTemplate,
-    triggerElement: "#mcart-mincart-trigger",
+    triggerElement: ".mcart-minicart-trigger",
     endpoints: {
-        cartPageUrl: "/cart.html"
+        cartPageUrl: "/cart.html",
+        checkoutPageUrl: "/cart.html"
     },
+    wrapperElement: ".mcart-minicart-wrapper",
     onTriggerElementClicked: (miniCartOption: MiniCartOption, $this: JQuery) => {
-        miniCartOption.renderToElement.find(".mini-cart").slideToggle( "fast");
+        miniCartOption.renderToElement.find(miniCartOption.wrapperElement).slideToggle( "fast");
     },
-    viewCartElement: ".viewCart",
+    viewCartElement: ".mcart-minicart-view-cart",
     onViewCartElementClicked: (miniCartOption: MiniCartOption, $this: JQuery) => {
         window.location.href = miniCartOption.endpoints.cartPageUrl;
     },
-    proceedToChekcoutElement: ".checkout",
+    proceedToChekcoutElement: ".mcart-minicart-checkout",
     onProceedToCheckoutElementClicked: (miniCartOption: MiniCartOption, $this: JQuery) => {
-        window.location.href = miniCartOption.endpoints.cartPageUrl;
+        window.location.href = miniCartOption.endpoints.checkoutPageUrl;
     },
-    cartItemRemoveElement: ".item-remove",
+    cartItemRemoveElement: ".mcart-minicart-item-remove",
     onCartItemRemoveElementClicked: (miniCartOption: MiniCartOption, cartItem: CartItem, $this: JQuery) => {
         Cart.getInstance().removeCartItemFromCart(cartItem);
     }

@@ -3,10 +3,11 @@ import { Product } from "./product";
 export interface ProductListingOption {
     renderToElement?: JQuery;
     replaceRenderToElementContent: boolean;
+    endpoints: {[key: string]: string};
     template: string;
     products: Product[];
     addToCartElement?: string;
-    onAddToCartElementClicked?: (event, product: Product, $this: JQuery) => void;
+    onAddToCartElementClicked?: (productListingOptions: ProductListingOption, event, product: Product, $this: JQuery) => void;
     buyNowElement?: string;
-    onBuyNowElementClicked?: (event, product: Product, $this: JQuery) => void;
+    onBuyNowElementClicked?: (productListingOptions: ProductListingOption, event, product: Product, $this: JQuery) => void;
 }

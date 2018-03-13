@@ -9,6 +9,7 @@ export interface MiniCartOption {
     viewCartElement?: string;
     proceedToChekcoutElement?: string;
     cartItemRemoveElement?: string;
+    wrapperElement?: string;
     template: string;
     onTriggerElementClicked?: (miniCartOption: MiniCartOption, $this: JQuery) => void;
     onViewCartElementClicked?: (miniCartOption: MiniCartOption, $this: JQuery) => void;
