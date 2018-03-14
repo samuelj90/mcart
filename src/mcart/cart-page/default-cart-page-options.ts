@@ -1,3 +1,5 @@
+import { states } from "./../shared/states";
+import { countries } from "./../shared/countries";
 import { isNullOrUndefined } from "util";
 import { cartPageTemplate } from "./cart-page-template";
 import { CartPageOptions } from "./cart-page-options";
@@ -6,6 +8,8 @@ import { CartItem } from "../cart/cart-item";
 import { Product } from "../product-listing/product";
 import { Order } from "../order";
 import { OrderStatus } from "../order/order-status";
+import *  as ejs from "ejs";
+import { selectOptionTemplate } from "./select-options-template";
 
 export const defaultCartPageOptions: CartPageOptions = {
     renderToElement: jQuery("body"),
@@ -22,18 +26,48 @@ export const defaultCartPageOptions: CartPageOptions = {
         cartPageOptions.renderToElement.off("click", "#" + templateOptions.couponFormSubmitBtn);
         templateOptions.couponFormSubmitBtn = "mcart-cartpage-updatecouponcode";
         cartPageOptions.renderToElement.off("click", "#" + templateOptions.couponFormSubmitBtn);
+        templateOptions.shippingFormElementId = "mcart-cartpage-shippingform";
+        templateOptions.couponDetailsFormElementId = "mcart-cartpage-coupondetailsform";
+        templateOptions.countries = countries;
+        templateOptions.states = states;
+        templateOptions.shippingCountrySelectId = "mcart-shippingdetails-countryselect";
+        templateOptions.shippingStateSelectId = "mcart-shippingdetails-stateselect";
     },
     afterCartPageRender: function (cartPageOptions: CartPageOptions, templateOptions: { [key: string]: string }) {
-        cartPageOptions.renderToElement.on("click", "#" + templateOptions.shippingFormSubmitBtn, function(event){
+        cartPageOptions.renderToElement.on("click", "#" + templateOptions.shippingFormSubmitBtn, function(event) {
             event.preventDefault();
             event.stopPropagation();
-            cartPageOptions.renderToElement.find("#mcart-cartpage-shippingform").find("input, select, textarea").each(function(index: number, elem: Element){
-                console.log($(elem).val());
+            let shippingDetails = {};
+            cartPageOptions.renderToElement.find("#" + templateOptions.shippingFormElementId).find("input, select, textarea").each(function(index: number, elem: Element){
+                shippingDetails[$(this).attr("name")] = $(this).val();
             });
+            console.log(shippingDetails);
+            Cart.getInstance().setShippingDetails(shippingDetails);
          });
-         cartPageOptions.renderToElement.on("click", "#" + templateOptions.couponFormSubmitBtn, function(event){
+         cartPageOptions.renderToElement.on("click", "#" + templateOptions.couponFormSubmitBtn, function(event) {
             event.preventDefault();
             event.stopPropagation();
+            let couponDetails = {};
+            cartPageOptions.renderToElement.find("#" + templateOptions.couponDetailsFormElementId).find("input").each(function(index: number, elem: Element){
+                couponDetails[$(this).attr("name")] = $(this).val();
+            });
+            Cart.getInstance().setCouponDetails(couponDetails);
+         });
+         cartPageOptions.renderToElement.on("change", "#" + templateOptions.shippingCountrySelectId, function(event) {
+            let selectedCountry = $(this).find("option:selected").data("selectedoption");
+            let correspondingStates =  states.filter((state) => {
+                return state.country_id === selectedCountry.id;
+            });
+            let templateData = {
+                options: correspondingStates,
+                selectedOption: null
+            };
+            let template = ejs.compile(selectOptionTemplate)(templateData);
+            cartPageOptions.renderToElement.find("#" + templateOptions.shippingStateSelectId).html(template);
+
+         });
+         cartPageOptions.renderToElement.on("change", "#" + templateOptions.shippingStateSelectId, function(event) {
+            let selectedState = $(this).find("options:selected").data("selectedoption");
          });
     },
     onCartFormSubmit: function (cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) {
@@ -53,14 +87,7 @@ export const defaultCartPageOptions: CartPageOptions = {
             data: data,
             success: function (data, textStatus, jqXHR) {
                 let orderInstance  = Order.getInstance();
-                orderInstance.orderId = data.orderId;
-                orderInstance.orderStatus = OrderStatus.Created;
-                orderInstance.orderItems = data.orderItems;
-                orderInstance.shippingDetails = data.shippingDetails;
-                orderInstance.couponDetails = data.couponDetails;
-                orderInstance.taxAmount = data.taxAmount;
-                console.log((orderInstance));
-                localStorage.setItem(orderInstance.ORDER_LOCAL_STORAGE_KEY, JSON.stringify(orderInstance));
+                orderInstance.setOrderId(data.orderId);
                 window.location.href = cartPageOptions.endpoints.confirmationPageUrl;
             },
             error: function (jqXHR, textStatus, errorThrown) {

@@ -12,6 +12,10 @@ $(function () {
         cartPage: {
             renderToElement: $('#cartpage-container'),
             replaceRenderToElementContent: true
+        },
+        confirmationPage:{
+            renderToElement: $('#confirmationpage-container'),
+            replaceRenderToElementContent: true
         }
     });
 });

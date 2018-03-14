@@ -11,7 +11,7 @@ export class Cart {
     // private cartModel: CartModel;
     private cartModelSubject: BehaviorSubject<CartModel>;
     private cartOptions: CartOptions;
-    CART_MODEL_LOCAL_STORAGE_KEY = "mcart-cart-model";
+    private static readonly CART_MODEL_LOCAL_STORAGE_KEY = "mcart-cart-model";
 
     private constructor(cartOptions?: CartOptions) {
         if (!isNullOrUndefined(this.cartModelSubject)) {
@@ -124,12 +124,12 @@ export class Cart {
             // try to load all cartItems from server using getCartItems
             // and set it into local storage.
         }
-        let cartModel: CartModel = <CartModel> JSON.parse(localStorage.getItem(this.CART_MODEL_LOCAL_STORAGE_KEY));
+        let cartModel: CartModel = <CartModel> JSON.parse(localStorage.getItem(Cart.CART_MODEL_LOCAL_STORAGE_KEY));
         return cartModel;
     }
     private saveCartModelIntoStorage(cartModel: CartModel) {
         if (this.cartOptions.localSyncingEnabled) {
-            localStorage.setItem(this.CART_MODEL_LOCAL_STORAGE_KEY, JSON.stringify(cartModel));
+            localStorage.setItem(Cart.CART_MODEL_LOCAL_STORAGE_KEY, JSON.stringify(cartModel));
         }
         if (this.cartOptions.remoteSyncingEnabled) {
             // try to save cartItem into server using addItemToCart

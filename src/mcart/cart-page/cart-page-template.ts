@@ -82,11 +82,11 @@ export const cartPageTemplate = `
                     <i class="fa fa-beer"></i> Coupon Details.
                 </div>
                 <div class="card-body">
-                <div class="row" id="mcart-cartpage-couponform">
+                <div class="row" id="mcart-cartpage-coupondetailsform">
                     <div class="col-12">
                         <div class="form-group">
                             <label for="Coupon Code">Coupon Code</label>
-                            <input type="text" class="form-control" name="couponcodeDetails[couponcode]"  placeholder="Enter coupon code" autocomplet="off">
+                            <input type="text" class="form-control" name="couponcode"  placeholder="Enter coupon code" autocomplet="off" value="<%= couponDetails.couponcode %>">
                         </div>
                         <div class="mx-auto">
                             <button type="submit" class="btn btn-primary text-right" id="<%= templateOptions.couponFormSubmitBtn %>">Update</button>
@@ -106,36 +106,40 @@ export const cartPageTemplate = `
                     <div class="col-6">
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" name="shippingDetails[name]" autocomplete='name' placeholder="Enter name" required>
+                            <input type="text" class="form-control" name="name" value="<%= shippingDetails.name %>" autocomplete='name' placeholder="Enter name" required>
                         </div>
                         <div class="form-group">
                             <label for="email">Email address</label>
-                            <input type="email" class="form-control" name="shippingDetails[email]"  autocomplete='email' placeholder="Enter email" required>
+                            <input type="email" class="form-control" name="email" value="<%= shippingDetails.email %>" autocomplete='email' placeholder="Enter email" required>
                             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                         </div>
                         <div class="form-group">
                             <label for="message">Address</label>
-                            <textarea class="form-control" name="shippingDetails[address]" rows="2"  autocomplete='address' placeholder="Enter Address" required></textarea>
+                            <textarea class="form-control" name="address" rows="2"  autocomplete='address' placeholder="Enter Address" required><%= shippingDetails.address %></textarea>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
                             <label for="name">Country</label>
-                            <select name="shippingDetails[country]" class="form-control w-100" autocomplete='country-name' required>
+                            <select name="country" id="<%= templateOptions.shippingCountrySelectId %>" class="form-control w-100" autocomplete='country-name' value="<%= shippingDetails.country %>" required>
                                 <option value="">Choose...</option>
-                                <option>United States</option>
+                                <% templateOptions.countries.forEach( country => { %>
+                                    <option value="<%= country.name %>" <%= country.name === shippingDetails.country ? 'selected': '' %>  data-selectedoption="<%= JSON.stringify(country) %>"><%= country.name %></option>
+                                <% }) %>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="name">State</label>
-                            <select name="shippingDetails[state]" class="form-control w-100"  autocomplete='address-level1' required>
+                            <select name="state" id="<%= templateOptions.shippingStateSelectId %>" class="form-control w-100"  autocomplete='address-level1' value="<%= shippingDetails.state %>" required>
                                 <option value="">Choose...</option>
-                                <option>United States</option>
+                                <% templateOptions.states.forEach( state => { %>
+                                    <option value="<%= state.name %>" <%= state.name === shippingDetails.state ? 'selected': '' %> data-selectedoption="<%= JSON.stringify(state) %>"><%= state.name %></option>
+                                <% }) %>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="name">Phone</label>
-                            <input type="text" class="form-control" name="shippingDetails[phone]" autocomplete='tel' placeholder="Enter Phone" required>
+                            <input type="text" class="form-control" name="phone" autocomplete='tel' placeholder="Enter Phone" value="<%= shippingDetails.phone %>" required>
                         </div>
                         <div class="mx-auto">
                             <button class="btn btn-primary text-right" id="<%= templateOptions.shippingFormSubmitBtn %>">Update totals</button>
