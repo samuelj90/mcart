@@ -4,6 +4,8 @@ import { CartPageOptions } from "./cart-page-options";
 import { Cart } from "../cart";
 import { CartItem } from "../cart/cart-item";
 import { Product } from "../product-listing/product";
+import { Order } from "../order";
+import { OrderStatus } from "../order/order-status";
 
 export const defaultCartPageOptions: CartPageOptions = {
     renderToElement: jQuery("body"),
@@ -12,6 +14,7 @@ export const defaultCartPageOptions: CartPageOptions = {
     cartFormElement: "#mcart-cartpage-form",
     endpoints: {
         confirmationPageUrl: "/confirmation.html",
+        createOrderURL: "/api/order/create"
     },
     templateOptions: {},
     beforeCartPageRender: function (cartPageOptions: CartPageOptions, templateOptions: { [key: string]: any }) {
@@ -34,7 +37,36 @@ export const defaultCartPageOptions: CartPageOptions = {
          });
     },
     onCartFormSubmit: function (cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) {
-        window.location.href = cartPageOptions.endpoints.confirmationPageUrl;
+        let cartModel = Cart.getInstance().getCartModelSubject().value;
+        let cartItems = cartModel.cartItems.map(function(cartItem) { return {id: cartItem.item.id, quantity: cartItem.quantity}; });
+        console.log(cartItems);
+        console.log(cartModel.shippingDetails);
+        console.log(cartModel.couponDetails);
+        let data = {
+            cartItems: cartItems,
+            shippingDetails: cartModel.shippingDetails,
+            couponDetails: cartModel.couponDetails
+        };
+        $.ajax({
+            url: cartPageOptions.endpoints.createOrderURL,
+            method: "POST",
+            data: data,
+            success: function (data, textStatus, jqXHR) {
+                let orderInstance  = Order.getInstance();
+                orderInstance.orderId = data.orderId;
+                orderInstance.orderStatus = OrderStatus.Created;
+                orderInstance.orderItems = data.orderItems;
+                orderInstance.shippingDetails = data.shippingDetails;
+                orderInstance.couponDetails = data.couponDetails;
+                orderInstance.taxAmount = data.taxAmount;
+                console.log((orderInstance));
+                localStorage.setItem(orderInstance.ORDER_LOCAL_STORAGE_KEY, JSON.stringify(orderInstance));
+                window.location.href = cartPageOptions.endpoints.confirmationPageUrl;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+            }
+        });
     },
     cartItemIncrementerElement: ".mcart-cartpage-cartitem-incrementer",
     onCartItemIncrementerElementClicked: function (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
