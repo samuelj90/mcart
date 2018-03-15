@@ -7,5 +7,7 @@ export const defaultConfirmationPageOptions: ConfirmationPageOptions = {
     template: confirmationPageTemplate,
     endpoints: {
         paymentURL: "",
+        noOrderReturnURL: "/",
+        getOrderModelURL: "/api/order/"
     }
 };

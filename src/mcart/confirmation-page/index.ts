@@ -6,6 +6,7 @@ import { Order } from "../order";
 import { RenderToElementNotFound } from "../render-to-element-notfound";
 import { defaultConfirmationPageOptions } from "./default-confirmation-page-options";
 import *  as ejs from "ejs";
+declare let window: any;
 export class ConfirmationPage {
   constructor(confirmationPageOptions: ConfirmationPageOptions) {
     this.renderConfirmationPage (confirmationPageOptions);
@@ -18,12 +19,30 @@ export class ConfirmationPage {
     if (confirmationPageOptions.replaceRenderToElementContent) {
       confirmationPageOptions.renderToElement.html("");
     }
-    let orderInstance = Order.getInstance();
-    let templateData = {
-      orderModel: orderInstance,
-      templateOptions: confirmationPageOptions.templateOptions
-    };
-    let template = ejs.compile(confirmationPageOptions.template)(templateData);
-    confirmationPageOptions.renderToElement.append(template);
+    let orderId = Order.getInstance().getOrderId();
+    if (isNullOrUndefined(orderId)) {
+      window.location.href = confirmationPageOptions.endpoints.noOrderReturnURL;
+    }
+    $.ajaxSetup({
+      headers: {
+          "X-CSRF-TOKEN": window.Laravel.csrfToken
+      }
+    });
+    $.ajax({
+      url: confirmationPageOptions.endpoints.getOrderModelURL + "/" + orderId,
+    }).done(function(data) {
+      let orderModel = data;
+      console.log(orderModel);
+      if (isNullOrUndefined(orderModel)) {
+        window.location.href = confirmationPageOptions.endpoints.noOrderReturnURL;
+        return;
+      }
+      let templateData = {
+        orderModel: orderModel,
+        templateOptions: confirmationPageOptions.templateOptions
+      };
+      let template = ejs.compile(confirmationPageOptions.template)(templateData);
+      confirmationPageOptions.renderToElement.append(template);
+    });
   }
 }

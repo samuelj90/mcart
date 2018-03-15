@@ -10,6 +10,9 @@ import { Order } from "../order";
 import { OrderStatus } from "../order/order-status";
 import *  as ejs from "ejs";
 import { selectOptionTemplate } from "./select-options-template";
+import { OrderModel } from "../order/order-model";
+
+declare let window: any;
 
 export const defaultCartPageOptions: CartPageOptions = {
     renderToElement: jQuery("body"),
@@ -18,7 +21,7 @@ export const defaultCartPageOptions: CartPageOptions = {
     cartFormElement: "#mcart-cartpage-form",
     endpoints: {
         confirmationPageUrl: "/confirmation.html",
-        createOrderURL: "/api/order/create"
+        createOrderURL: "/api/order/"
     },
     templateOptions: {},
     beforeCartPageRender: function (cartPageOptions: CartPageOptions, templateOptions: { [key: string]: any }) {
@@ -76,23 +79,27 @@ export const defaultCartPageOptions: CartPageOptions = {
         console.log(cartItems);
         console.log(cartModel.shippingDetails);
         console.log(cartModel.couponDetails);
-        let data = {
-            cartItems: cartItems,
-            shippingDetails: cartModel.shippingDetails,
-            couponDetails: cartModel.couponDetails
+        let cartData = {
+            "_token": window.Laravel.csrfToken,
+            "cartItems": cartItems,
+            "shippingDetails": cartModel.shippingDetails,
+            "couponDetails": cartModel.couponDetails
         };
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": window.Laravel.csrfToken
+            }
+        });
         $.ajax({
             url: cartPageOptions.endpoints.createOrderURL,
+            data: cartData,
             method: "POST",
-            data: data,
             success: function (data, textStatus, jqXHR) {
-                let orderInstance  = Order.getInstance();
+                let orderInstance = Order.getInstance();
                 orderInstance.setOrderId(data.orderId);
                 window.location.href = cartPageOptions.endpoints.confirmationPageUrl;
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-
-            }
+            dataType: "json"
         });
     },
     cartItemIncrementerElement: ".mcart-cartpage-cartitem-incrementer",

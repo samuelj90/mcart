@@ -1,27 +1,23 @@
 import { OrderStatus } from "./order-status";
+import { OrderModel } from "./order-model";
+import { isNullOrUndefined } from "util";
+import { OrderOptions } from "./order-options";
+import { defaultOrderOptions } from "./default-order-options";
 
 export class Order {
     private static instance: Order;
-    private static readonly ORDER_LOCAL_STORAGE_KEY = "mcart-orderinstance";
-    private orderItems;
-    private shippingDetails;
-    private couponDetails;
     private orderId: number;
-    private orderStatus: OrderStatus = OrderStatus.OPEN;
-    private taxAmount: number;
-    private constructor() {
-        let orderInstance = loadFromLocalStorage();
+    private static readonly ORDER_LOCAL_STORAGE_KEY = "mcart-orderinstance";
+    private constructor(private oderOptions: OrderOptions) {
+        this.oderOptions = $.extend({}, defaultOrderOptions, oderOptions);
     }
-    setOrderId(orderId: number): any {
-       this.orderId = orderId;
+    public setOrderId(orderId) {
+        localStorage.setItem(Order.ORDER_LOCAL_STORAGE_KEY, orderId + "");
     }
-    saveToLocalStorage(order: Order) {
-        localStorage.setItem(Order.ORDER_LOCAL_STORAGE_KEY, JSON.stringify(order));
+    public getOrderId() {
+        return localStorage.getItem(Order.ORDER_LOCAL_STORAGE_KEY);
     }
-    loadFromLocalStorage(): Order {
-        return JSON.parse(localStorage.getItem(Order.ORDER_LOCAL_STORAGE_KEY));
-    }
-    public static getInstance() {
-        return this.instance || (this.instance = new this());
+    public static getInstance(oderOptions?: OrderOptions) {
+        return this.instance || (this.instance = new this(oderOptions));
     }
 }
