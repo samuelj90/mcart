@@ -1,5 +1,6 @@
 import { CartItem } from "../cart/cart-item";
 import { Cart } from "../cart";
+import { Order } from "../order";
 
 export interface CartPageOptions {
     renderToElement: JQuery;
@@ -10,11 +11,11 @@ export interface CartPageOptions {
     beforeCartPageRender?: (cartPageOptions: CartPageOptions, templateOptions: {[key: string]: string}) => void;
     afterCartPageRender?: (cartPageOptions: CartPageOptions, templateOptions: {[key: string]: string}) => void;
     cartFormElement: string;
-    onCartFormSubmit: (cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) => void;
+    onCartFormSubmit: (Cart:Cart, Order:Order, cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) => void;
     cartItemIncrementerElement?: string;
-    onCartItemIncrementerElementClicked?: (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
+    onCartItemIncrementerElementClicked?: (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
     cartItemDecrementerElement?: string;
-    onCartItemDecrementerElementClicked?: (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
+    onCartItemDecrementerElementClicked?: (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
     cartItemRemoveElement?: string;
-    onCartItemRemoveElementClicked?: (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
+    onCartItemRemoveElementClicked?: (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) => void;
 }

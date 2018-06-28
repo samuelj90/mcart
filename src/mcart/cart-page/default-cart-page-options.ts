@@ -26,7 +26,7 @@ export const defaultCartPageOptions: CartPageOptions = {
     templateOptions: {},
     beforeCartPageRender: function (cartPageOptions: CartPageOptions, templateOptions: { [key: string]: any }) {
         templateOptions.shippingFormSubmitBtn = "mcart-cartpage-updateshipping";
-        cartPageOptions.renderToElement.off("click", "#" + templateOptions.couponFormSubmitBtn);
+        cartPageOptions.renderToElement.off("click", "#" + templateOptions.shippingFormSubmitBtn);
         templateOptions.couponFormSubmitBtn = "mcart-cartpage-updatecouponcode";
         cartPageOptions.renderToElement.off("click", "#" + templateOptions.couponFormSubmitBtn);
         templateOptions.shippingFormElementId = "mcart-cartpage-shippingform";
@@ -73,47 +73,42 @@ export const defaultCartPageOptions: CartPageOptions = {
             let selectedState = $(this).find("options:selected").data("selectedoption");
          });
     },
-    onCartFormSubmit: function (cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) {
-        let cartModel = Cart.getInstance().getCartModelSubject().value;
+    onCartFormSubmit: function (Cart:Cart, Order:Order, cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) {
+        let cartModel = Cart.getCartModelSubject().value;
         let cartItems = cartModel.cartItems.map(function(cartItem) { return {id: cartItem.item.id, quantity: cartItem.quantity}; });
-        console.log(cartItems);
-        console.log(cartModel.shippingDetails);
-        console.log(cartModel.couponDetails);
+        if(cartItems.length <= 0) {
+            cartModel.errors = ["Cart items cannot be empty"];
+            Cart.upateBehaviourSubjectWithoutSyncing(cartModel);
+            return;
+        }
         let cartData = {
-            "_token": window.Laravel.csrfToken,
             "cartItems": cartItems,
             "shippingDetails": cartModel.shippingDetails,
             "couponDetails": cartModel.couponDetails
         };
-        $.ajaxSetup({
-            headers: {
-                "X-CSRF-TOKEN": window.Laravel.csrfToken
-            }
-        });
         $.ajax({
             url: cartPageOptions.endpoints.createOrderURL,
             data: cartData,
             method: "POST",
             success: function (data, textStatus, jqXHR) {
-                let orderInstance = Order.getInstance();
-                orderInstance.setOrderId(data.orderId);
+                Order.setOrderId(data.orderId);
                 window.location.href = cartPageOptions.endpoints.confirmationPageUrl;
             },
             dataType: "json"
         });
     },
     cartItemIncrementerElement: ".mcart-cartpage-cartitem-incrementer",
-    onCartItemIncrementerElementClicked: function (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
+    onCartItemIncrementerElementClicked: function (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
         let product: Product = cartItem.item;
-        Cart.getInstance().insertProductToCart(product, 1);
+        Cart.insertProductToCart(product, 1);
     },
     cartItemDecrementerElement: ".mcart-cartpage-cartitem-decrementer",
-    onCartItemDecrementerElementClicked: function (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
+    onCartItemDecrementerElementClicked: function (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
         let product: Product = cartItem.item;
-        Cart.getInstance().removeProductFromCart(product, 1);
+        Cart.removeProductFromCart(product, 1);
     },
     cartItemRemoveElement: ".mcart-cartpage-cartitem-remove",
-    onCartItemRemoveElementClicked: function (cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
-        Cart.getInstance().removeCartItemFromCart(cartItem);
+    onCartItemRemoveElementClicked: function (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
+        Cart.removeCartItemFromCart(cartItem);
     }
 };

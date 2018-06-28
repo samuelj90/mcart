@@ -55,6 +55,11 @@ export class Cart {
             this.saveCartModelIntoStorage(cartModel);
         }
     }
+    public upateBehaviourSubjectWithoutSyncing(cartModel: CartModel) {
+        cartModel.taxAmount =  this.cartOptions.calculateTaxAmount(cartModel);
+        this.cartModelSubject.next(cartModel);
+    }
+
     public insertProductToCart(product: Product, count: number = 1) {
         let cartModel: CartModel = this.cartModelSubject.getValue();
         let changeInCartItemsTotal = 0;

@@ -7,6 +7,7 @@ import { CartItem } from "../cart/cart-item";
 import { Product } from "../product-listing/product";
 import *  as ejs from "ejs";
 import { RenderToElementNotFound } from "../render-to-element-notfound";
+import { Order } from "../order";
 
 export class CartPage {
     private orderModel: any = {
@@ -67,7 +68,7 @@ export class CartPage {
                     event.preventDefault();
                     event.stopPropagation();
                     let $this = $(this);
-                    cartPageOptions.onCartFormSubmit(cartPageOptions, event, $this);
+                    cartPageOptions.onCartFormSubmit(Cart.getInstance(), Order.getInstance(), cartPageOptions, event, $this);
                 });
             }
             let cartRefernce = Cart;
@@ -77,7 +78,7 @@ export class CartPage {
                     event.stopPropagation();
                     let $this = $(this);
                     let cartItem = $this.data("cartitem") as CartItem;
-                    cartPageOptions.onCartItemIncrementerElementClicked(cartPageOptions, cartItem, event, $this);
+                    cartPageOptions.onCartItemIncrementerElementClicked(Cart.getInstance(), cartPageOptions, cartItem, event, $this);
                 });
             }
             if (!!cartPageOptions.cartItemDecrementerElement) {
@@ -86,7 +87,7 @@ export class CartPage {
                     event.stopPropagation();
                     let $this = $(this);
                     let cartItem = $this.data("cartitem") as CartItem;
-                    cartPageOptions.onCartItemDecrementerElementClicked(cartPageOptions, cartItem, event, $this);
+                    cartPageOptions.onCartItemDecrementerElementClicked(Cart.getInstance(), cartPageOptions, cartItem, event, $this);
                 });
             }
             if (!!cartPageOptions.cartItemRemoveElement) {
@@ -95,7 +96,7 @@ export class CartPage {
                     event.stopPropagation();
                     let $this = $(this);
                     let cartItem = $this.data("cartitem") as CartItem;
-                    cartPageOptions.onCartItemRemoveElementClicked(cartPageOptions, cartItem, event, $this);
+                    cartPageOptions.onCartItemRemoveElementClicked(Cart.getInstance(), cartPageOptions, cartItem, event, $this);
                 });
             }
         } catch (error) {

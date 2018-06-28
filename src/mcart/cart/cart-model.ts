@@ -6,4 +6,5 @@ export interface CartModel {
     shippingDetails: any;
     couponDetails: any;
     taxAmount: number;
+    errors?: any;
 }
