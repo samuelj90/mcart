@@ -1,4 +1,4 @@
-export interface OrderOptions {
+export interface IOrderOptions {
     localSyncingEnabled: boolean;
     remoteSyncingEnabled: boolean;
 }

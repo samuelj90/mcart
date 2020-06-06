@@ -1,13 +1,17 @@
-import { Product } from "./product";
+import { IProduct } from "./product";
 
-export interface ProductListingOption {
+export interface IProductListingOption {
     renderToElement?: JQuery;
     replaceRenderToElementContent: boolean;
-    endpoints: {[key: string]: string};
+    endpoints: { [key: string]: string };
     template: string;
-    products: Product[];
+    products: IProduct[];
     addToCartElement?: string;
-    onAddToCartElementClicked?: (productListingOptions: ProductListingOption, event, product: Product, $this: JQuery) => void;
+    onAddToCartElementClicked?: (
+        productListingOptions: IProductListingOption, event, product: IProduct, $this: JQuery,
+    ) => void;
     buyNowElement?: string;
-    onBuyNowElementClicked?: (productListingOptions: ProductListingOption, event, product: Product, $this: JQuery) => void;
+    onBuyNowElementClicked?: (
+        productListingOptions: IProductListingOption, event, product: IProduct, $this: JQuery,
+    ) => void;
 }

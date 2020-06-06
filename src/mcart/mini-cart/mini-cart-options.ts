@@ -1,6 +1,6 @@
-import { CartItem } from "../cart/cart-item";
+import { ICartItem } from "../cart/cart-item";
 
-export interface MiniCartOption {
+export interface IMiniCartOption {
     renderToElement: JQuery;
     replaceRenderToElementContent: boolean;
     triggerElement: string;
@@ -10,8 +10,8 @@ export interface MiniCartOption {
     cartItemRemoveElement?: string;
     wrapperElement?: string;
     template: string;
-    onTriggerElementClicked?: (miniCartOption: MiniCartOption, $this: JQuery) => void;
-    onViewCartElementClicked?: (miniCartOption: MiniCartOption, $this: JQuery) => void;
-    onProceedToCheckoutElementClicked?: (miniCartOption: MiniCartOption, $this: JQuery) => void;
-    onCartItemRemoveElementClicked?: (miniCartOption: MiniCartOption, cartItem: CartItem, $this: JQuery) => void;
+    onTriggerElementClicked?: (miniCartOption: IMiniCartOption, $this: JQuery) => void;
+    onViewCartElementClicked?: (miniCartOption: IMiniCartOption, $this: JQuery) => void;
+    onProceedToCheckoutElementClicked?: (miniCartOption: IMiniCartOption, $this: JQuery) => void;
+    onCartItemRemoveElementClicked?: (miniCartOption: IMiniCartOption, cartItem: ICartItem, $this: JQuery) => void;
 }

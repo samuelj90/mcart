@@ -1,6 +1,6 @@
 import { OrderStatus } from "./order-status";
 
-export interface OrderModel {
+export interface IOrderModel {
     orderItems?;
     shippingDetails?;
     couponDetails?;

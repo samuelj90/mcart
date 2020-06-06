@@ -1,7 +1,7 @@
-import { CartItem } from "./cart-item";
+import { ICartItem } from "./cart-item";
 
-export interface CartModel {
-    cartItems: CartItem[];
+export interface ICartModel {
+    cartItems: ICartItem[];
     cartItemsTotal: number;
     shippingDetails: any;
     couponDetails: any;

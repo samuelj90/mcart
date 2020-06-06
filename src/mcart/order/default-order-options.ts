@@ -1,6 +1,6 @@
-import { OrderOptions } from "./order-options";
+import { IOrderOptions } from "./order-options";
 
-export const defaultOrderOptions: OrderOptions = {
+export const defaultOrderOptions: IOrderOptions = {
     localSyncingEnabled: true,
     remoteSyncingEnabled: true,
 };
