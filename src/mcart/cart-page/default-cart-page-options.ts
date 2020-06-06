@@ -1,27 +1,30 @@
-import { states } from "./../shared/states";
-import { countries } from "./../shared/countries";
-import { cartPageTemplate } from "./cart-page-template";
-import { CartPageOptions } from "./cart-page-options";
+import * as ejs from "ejs";
 import { Cart } from "../cart";
-import { CartItem } from "../cart/cart-item";
-import { Product } from "../product-listing/product";
+import { ICartItem } from "../cart/cart-item";
 import { Order } from "../order";
-import *  as ejs from "ejs";
+import { IProduct } from "../product-listing/product";
+import { countries } from "./../shared/countries";
+import { states } from "./../shared/states";
+import { ICartPageOptions } from "./cart-page-options";
+import { cartPageTemplate } from "./cart-page-template";
 import { selectOptionTemplate } from "./select-options-template";
 
 declare let window: any;
 
-export const defaultCartPageOptions: CartPageOptions = {
+export const defaultCartPageOptions: ICartPageOptions = {
+    cartFormElement: "#mcart-cartpage-form",
+    cartItemDecrementerElement: ".mcart-cartpage-cartitem-decrementer",
+    cartItemIncrementerElement: ".mcart-cartpage-cartitem-incrementer",
+    cartItemRemoveElement: ".mcart-cartpage-cartitem-remove",
+    endpoints: {
+        confirmationPageUrl: "/confirmation.html",
+        createOrderURL: "/api/order/",
+    },
     renderToElement: jQuery("body"),
     replaceRenderToElementContent: false,
     template: cartPageTemplate,
-    cartFormElement: "#mcart-cartpage-form",
-    endpoints: {
-        confirmationPageUrl: "/confirmation.html",
-        createOrderURL: "/api/order/"
-    },
     templateOptions: {},
-    beforeCartPageRender: function (cartPageOptions: CartPageOptions, templateOptions: { [key: string]: any }) {
+    beforeCartPageRender(cartPageOptions: ICartPageOptions, templateOptions: { [key: string]: any }) {
         templateOptions.shippingFormSubmitBtn = "mcart-cartpage-updateshipping";
         cartPageOptions.renderToElement.off("click", "#" + templateOptions.shippingFormSubmitBtn);
         templateOptions.couponFormSubmitBtn = "mcart-cartpage-updatecouponcode";
@@ -33,79 +36,103 @@ export const defaultCartPageOptions: CartPageOptions = {
         templateOptions.shippingCountrySelectId = "mcart-shippingdetails-countryselect";
         templateOptions.shippingStateSelectId = "mcart-shippingdetails-stateselect";
     },
-    afterCartPageRender: function (cartPageOptions: CartPageOptions, templateOptions: { [key: string]: string }) {
-        cartPageOptions.renderToElement.on("click", "#" + templateOptions.shippingFormSubmitBtn, function(event) {
+    afterCartPageRender(cartPageOptions: ICartPageOptions, templateOptions: { [key: string]: string }) {
+        cartPageOptions.renderToElement.on("click", "#" + templateOptions.shippingFormSubmitBtn, (event) => {
             event.preventDefault();
             event.stopPropagation();
-            let shippingDetails = {};
-            cartPageOptions.renderToElement.find("#" + templateOptions.shippingFormElementId).find("input, select, textarea").each(function(index: number, elem: Element){
+            const shippingDetails = {};
+            cartPageOptions.renderToElement.find("#" + templateOptions.shippingFormElementId).find("input, select, textarea").each((index: number, elem: Element) => {
                 shippingDetails[$(this).attr("name")] = $(this).val();
             });
-            console.log(shippingDetails);
             Cart.getInstance().setShippingDetails(shippingDetails);
-         });
-         cartPageOptions.renderToElement.on("click", "#" + templateOptions.couponFormSubmitBtn, function(event) {
+        });
+        cartPageOptions.renderToElement.on("click", "#" + templateOptions.couponFormSubmitBtn, (event) => {
             event.preventDefault();
             event.stopPropagation();
-            let couponDetails = {};
-            cartPageOptions.renderToElement.find("#" + templateOptions.couponDetailsFormElementId).find("input").each(function(index: number, elem: Element){
-                couponDetails[$(this).attr("name")] = $(this).val();
-            });
+            const couponDetails = {};
+            cartPageOptions.renderToElement.
+                find("#" + templateOptions.couponDetailsFormElementId)
+                .find("input").each((index: number, elem: Element) => {
+                    couponDetails[$(this).attr("name")] = $(this).val();
+                });
             Cart.getInstance().setCouponDetails(couponDetails);
-         });
-         cartPageOptions.renderToElement.on("change", "#" + templateOptions.shippingCountrySelectId, function(event) {
-            let selectedCountry = $(this).find("option:selected").data("selectedoption");
-            let correspondingStates =  states.filter((state) => {
+        });
+        cartPageOptions.renderToElement.on("change", "#" + templateOptions.shippingCountrySelectId, (event) => {
+            const selectedCountry = $(this).find("option:selected").data("selectedoption");
+            const correspondingStates = states.filter((state) => {
                 return state.country_id === selectedCountry.id;
             });
-            let templateData = {
+            const templateData = {
                 options: correspondingStates,
-                selectedOption: null
+                selectedOption: null,
             };
-            let template = ejs.compile(selectOptionTemplate)(templateData);
+            const template = ejs.compile(selectOptionTemplate)(templateData);
             cartPageOptions.renderToElement.find("#" + templateOptions.shippingStateSelectId).html(template);
 
-         });
-         cartPageOptions.renderToElement.on("change", "#" + templateOptions.shippingStateSelectId, function(event) {
-            let selectedState = $(this).find("options:selected").data("selectedoption");
-         });
-    },
-    onCartFormSubmit: function (Cart: Cart, Order: Order, cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) {
-        let cartModel = Cart.getCartModelSubject().value;
-        let cartItems = cartModel.cartItems.map(function(cartItem) { return {id: cartItem.item.id, quantity: cartItem.quantity}; });
-        if (cartItems.length <= 0) {
-            cartModel.errors = ["Cart items cannot be empty"];
-            Cart.upateBehaviourSubjectWithoutSyncing(cartModel);
-            return;
-        }
-        let cartData = {
-            "cartItems": cartItems,
-            "shippingDetails": cartModel.shippingDetails,
-            "couponDetails": cartModel.couponDetails
-        };
-        $.ajax({
-            url: cartPageOptions.endpoints.createOrderURL,
-            data: cartData,
-            method: "POST",
-            success: function (data, textStatus, jqXHR) {
-                Order.setOrderId(data.orderId);
-                window.location.href = cartPageOptions.endpoints.confirmationPageUrl;
-            },
-            dataType: "json"
+        });
+        cartPageOptions.renderToElement.on("change", "#" + templateOptions.shippingStateSelectId, (event) => {
+            const selectedState = $(this).find("options:selected").data("selectedoption");
         });
     },
-    cartItemIncrementerElement: ".mcart-cartpage-cartitem-incrementer",
-    onCartItemIncrementerElementClicked: function (Cart: Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
-        let product: Product = cartItem.item;
-        Cart.insertProductToCart(product, 1);
+    onCartFormSubmit(
+        CartOb: Cart,
+        OrderOb: Order,
+        cartPageOptions: ICartPageOptions,
+        event: JQueryEventObject,
+        $this: JQuery) {
+        const cartModel = CartOb.getCartModelSubject().value;
+        const cartItems = cartModel.cartItems.map(
+            (cartItem) => {
+                return { id: cartItem.item.id, quantity: cartItem.quantity };
+            });
+        if (cartItems.length <= 0) {
+            cartModel.errors = ["Cart items cannot be empty"];
+            CartOb.upateBehaviourSubjectWithoutSyncing(cartModel);
+            return;
+        }
+        const cartData = {
+            cartItems,
+            couponDetails: cartModel.couponDetails,
+            shippingDetails: cartModel.shippingDetails,
+        };
+        $.ajax({
+            data: cartData,
+            dataType: "json",
+            method: "POST",
+            success(data, textStatus, jqXHR) {
+                OrderOb.setOrderId(data.orderId);
+                window.location.href = cartPageOptions.endpoints.confirmationPageUrl;
+            },
+            url: cartPageOptions.endpoints.createOrderURL,
+        });
     },
-    cartItemDecrementerElement: ".mcart-cartpage-cartitem-decrementer",
-    onCartItemDecrementerElementClicked: function (Cart: Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
-        let product: Product = cartItem.item;
-        Cart.removeProductFromCart(product, 1);
+
+    onCartItemIncrementerElementClicked(
+        CartOb: Cart,
+        cartPageOptions: ICartPageOptions,
+        cartItem: ICartItem,
+        event: JQueryEventObject,
+        $this: JQuery) {
+        const product: IProduct = cartItem.item;
+        CartOb.insertProductToCart(product, 1);
     },
-    cartItemRemoveElement: ".mcart-cartpage-cartitem-remove",
-    onCartItemRemoveElementClicked: function (Cart: Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
-        Cart.removeCartItemFromCart(cartItem);
-    }
+
+    onCartItemDecrementerElementClicked(
+        CartOb: Cart,
+        cartPageOptions: ICartPageOptions,
+        cartItem: ICartItem,
+        event: JQueryEventObject,
+        $this: JQuery) {
+        const product: IProduct = cartItem.item;
+        CartOb.removeProductFromCart(product, 1);
+    },
+
+    onCartItemRemoveElementClicked(
+        CartOb: Cart,
+        cartPageOptions: ICartPageOptions,
+        cartItem: ICartItem,
+        event: JQueryEventObject,
+        $this: JQuery) {
+        CartOb.removeCartItemFromCart(cartItem);
+    },
 };

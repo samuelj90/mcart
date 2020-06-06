@@ -1,12 +1,13 @@
-import {MCartOptions} from "./mcart/mcart-options";
-import {MCart} from "./mcart";
+import "jquery";
+import { MCart } from "./mcart";
+import { IMCartOptions } from "./mcart/mcart-options";
 
-(function ($: JQueryStatic) {
+(($: JQueryStatic) => {
    // you have to extend jQuery with the fn['pluginName'] notation because in Typescript you can't extend
    // the existing typing interface with fn.pluginName!
-   $.fn[MCart.NAME] = function (options: MCartOptions) {
-      return this.each(function () {
-         new MCart($(this), options);
+   $.fn[MCart.NAME] = function(options: IMCartOptions) {
+      return this.each(() => {
+         return new MCart($(this), options);
       });
    };
 })(jQuery);

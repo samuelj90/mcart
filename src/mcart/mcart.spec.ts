@@ -1,3 +1,4 @@
+import "jasmine";
 import {MCart} from "./";
 
 describe("MCartPlugin", () => {
@@ -9,6 +10,7 @@ describe("MCartPlugin", () => {
 
    it("should throw error for options is null", () => {
       try {
+         // tslint:disable-next-line:no-unused-expression
          new MCart(rootElement, null);
          fail("an error should have been thrown here");
       } catch (error) {
@@ -18,6 +20,7 @@ describe("MCartPlugin", () => {
 
    it("should throw error for options is undefined", () => {
       try {
+         // tslint:disable-next-line:no-unused-expression
          new MCart(rootElement, undefined);
          fail("an error should have been thrown here");
       } catch (error) {

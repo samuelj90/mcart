@@ -1,15 +1,13 @@
-import { ConfirmationPageOptions } from "./confirmation-page-options";
+import * as ejs from "ejs";
 import { isNullOrUndefined } from "util";
-import { Cart } from "../cart";
-import { CartItem } from "../cart/cart-item";
 import { Order } from "../order";
 import { RenderToElementNotFound } from "../render-to-element-notfound";
+import { ConfirmationPageOptions } from "./confirmation-page-options";
 import { defaultConfirmationPageOptions } from "./default-confirmation-page-options";
-import *  as ejs from "ejs";
 declare let window: any;
 export class ConfirmationPage {
   constructor(confirmationPageOptions: ConfirmationPageOptions) {
-    this.renderConfirmationPage (confirmationPageOptions);
+    this.renderConfirmationPage(confirmationPageOptions);
   }
   private renderConfirmationPage(confirmationPageOptions: ConfirmationPageOptions): void {
     if (confirmationPageOptions.renderToElement.length <= 0) {
@@ -19,29 +17,28 @@ export class ConfirmationPage {
     if (confirmationPageOptions.replaceRenderToElementContent) {
       confirmationPageOptions.renderToElement.html("");
     }
-    let orderId = Order.getInstance().getOrderId();
+    const orderId = Order.getInstance().getOrderId();
     if (isNullOrUndefined(orderId)) {
       window.location.href = confirmationPageOptions.endpoints.noOrderReturnURL;
     }
     $.ajaxSetup({
       headers: {
-          "X-CSRF-TOKEN": window.Laravel.csrfToken
-      }
+        "X-CSRF-TOKEN": window.Laravel.csrfToken,
+      },
     });
     $.ajax({
       url: confirmationPageOptions.endpoints.getOrderModelURL + "/" + orderId,
-    }).done(function(data) {
-      let orderModel = data;
-      console.log(orderModel);
+    }).done((data) => {
+      const orderModel = data;
       if (isNullOrUndefined(orderModel)) {
         window.location.href = confirmationPageOptions.endpoints.noOrderReturnURL;
         return;
       }
-      let templateData = {
-        orderModel: orderModel,
-        templateOptions: confirmationPageOptions.templateOptions
+      const templateData = {
+        orderModel,
+        templateOptions: confirmationPageOptions.templateOptions,
       };
-      let template = ejs.compile(confirmationPageOptions.template)(templateData);
+      const template = ejs.compile(confirmationPageOptions.template)(templateData);
       confirmationPageOptions.renderToElement.append(template);
     });
   }

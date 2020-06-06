@@ -1,36 +1,30 @@
-import { CartModel } from "./../cart/cart-model";
-import { MiniCartOption } from "./mini-cart-options";
+import * as ejs from "ejs";
 import { Cart } from "../cart";
-import { CartItem } from "../cart/cart-item";
+import { ICartItem } from "../cart/cart-item";
+import { ICartModel } from "./../cart/cart-model";
 import { defaultMiniCartOption } from "./default-mini-cart-option";
-import *  as ejs from "ejs";
+import { IMiniCartOption } from "./mini-cart-options";
 /**
  * - Should support multiple minicart on single configuartion
  * - Should have multiple cart items counter and multiple totals
  * - May or maynot have checkout and view cart buttons
  */
 export class MiniCart {
-    private cartItems: CartItem[];
+    private cartItems: ICartItem[];
 
-    constructor(private miniCartOptions: MiniCartOption[]) {
+    constructor(private miniCartOptions: IMiniCartOption[]) {
         const behaviourSubject = Cart.getInstance().getCartModelSubject();
         const self = this;
         behaviourSubject.subscribe(
-            function (cartModel: CartModel) {
+            (cartModel: ICartModel) => {
                 self.renderMiniCart(miniCartOptions, cartModel);
                 // TODO: Remove unused event bindings.
             },
-            function (error) {
-                console.error("Error", error);
-            },
-            function () {
-                console.debug("Completed behaviour subject subscription");
-            }
         );
     }
 
-    private renderMiniCart(miniCartOptions: MiniCartOption[], cartModel: CartModel): void {
-        miniCartOptions.forEach((miniCartOption: MiniCartOption, index: number, miniCartOptions: MiniCartOption[]) => {
+    private renderMiniCart(miniCartOptions: IMiniCartOption[], cartModel: ICartModel): void {
+        miniCartOptions.forEach((miniCartOption: IMiniCartOption, index: number) => {
             try {
                 if (miniCartOption.renderToElement.length <= 0) {
                     throw new Error(`renderToElement ${miniCartOption.renderToElement},  is not found in DOM`);
@@ -39,10 +33,10 @@ export class MiniCart {
                 if (miniCartOption.replaceRenderToElementContent) {
                     miniCartOption.renderToElement.html("");
                 }
-                let templateData = {
-                    cartModel: cartModel
+                const templateData = {
+                    cartModel,
                 };
-                let template = ejs.compile(miniCartOption.template)(templateData);
+                const template = ejs.compile(miniCartOption.template)(templateData);
                 if (!!miniCartOption.triggerElement) {
                     miniCartOption.renderToElement.off("click", miniCartOption.triggerElement);
                 }
@@ -57,38 +51,41 @@ export class MiniCart {
                 }
                 miniCartOption.renderToElement.append(template);
                 if (!!miniCartOption.triggerElement) {
-                    miniCartOption.renderToElement.on("click", miniCartOption.triggerElement, function(event: JQueryEventObject){
-                        event.stopPropagation();
-                        let $this: JQuery = $(this);
-                        miniCartOption.onTriggerElementClicked(miniCartOption, $this);
-                    });
+                    miniCartOption.renderToElement.on(
+                        "click", miniCartOption.triggerElement, (event: JQueryEventObject) => {
+                            event.stopPropagation();
+                            const $this: JQuery = $(this);
+                            miniCartOption.onTriggerElementClicked(miniCartOption, $this);
+                        });
                 }
                 if (!!miniCartOption.viewCartElement) {
-                    miniCartOption.renderToElement.on("click", miniCartOption.viewCartElement, function(event: JQueryEventObject){
-                        event.stopPropagation();
-                        let $this: JQuery = $(this);
-                        miniCartOption.onViewCartElementClicked(miniCartOption, $this);
-                    });
+                    miniCartOption.renderToElement.on(
+                        "click", miniCartOption.viewCartElement, (event: JQueryEventObject) => {
+                            event.stopPropagation();
+                            const $this: JQuery = $(this);
+                            miniCartOption.onViewCartElementClicked(miniCartOption, $this);
+                        });
                 }
                 if (!!miniCartOption.proceedToChekcoutElement) {
-                    miniCartOption.renderToElement.on("click", miniCartOption.proceedToChekcoutElement, function(event: JQueryEventObject){
-                        event.stopPropagation();
-                        let $this: JQuery = $(this);
-                        miniCartOption.onProceedToCheckoutElementClicked(miniCartOption, $this);
-                    });
+                    miniCartOption.renderToElement.on(
+                        "click", miniCartOption.proceedToChekcoutElement, (event: JQueryEventObject) => {
+                            event.stopPropagation();
+                            const $this: JQuery = $(this);
+                            miniCartOption.onProceedToCheckoutElementClicked(miniCartOption, $this);
+                        });
                 }
                 if (!!miniCartOption.cartItemRemoveElement) {
-                    const removeCartItemEventHandler = function(event: JQueryEventObject){
+                    const removeCartItemEventHandler = (event: JQueryEventObject) => {
                         event.stopPropagation();
-                        let $this: JQuery = $(this);
-                        let cartItem = $(this).data("cartitem") as CartItem;
+                        const $this: JQuery = $(this);
+                        const cartItem = $(this).data("cartitem") as ICartItem;
                         miniCartOption.onCartItemRemoveElementClicked(miniCartOption, cartItem, $this);
                     };
-                    miniCartOption.renderToElement.on("click", miniCartOption.cartItemRemoveElement, removeCartItemEventHandler);
+                    miniCartOption.renderToElement.on(
+                        "click", miniCartOption.cartItemRemoveElement, removeCartItemEventHandler);
                 }
-            }catch (error) {
-                console.error(error);
-            }
+            // tslint:disable-next-line:no-empty
+            } finally {}
         });
     }
 }

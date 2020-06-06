@@ -1,7 +1,7 @@
-import { CartModel } from "./cart-model";
-export interface CartOptions {
+import { ICartModel } from "./cart-model";
+export interface ICartOptions {
     localSyncingEnabled: boolean;
     remoteSyncingEnabled: boolean;
-    calculateShippingCharge?: (cartModel: CartModel) => number;
-    calculateTaxAmount?: (cartModel: CartModel) => number;
+    calculateShippingCharge?: (cartModel: ICartModel) => number;
+    calculateTaxAmount?: (cartModel: ICartModel) => number;
 }

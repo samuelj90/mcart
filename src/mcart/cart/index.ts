@@ -1,19 +1,23 @@
-import { defaultCartOptions } from "./default-cart-options";
-import { CartItem } from "./cart-item";
-import { Product } from "../product-listing/product";
 import { BehaviorSubject } from "rxjs";
-import { error } from "util";
+import { IProduct } from "../product-listing/product";
 import { isNullOrUndefined } from "../utils";
-import { CartOptions } from "./cart-options";
-import { CartModel } from "./cart-model";
+import { ICartItem } from "./cart-item";
+import { ICartModel } from "./cart-model";
+import { ICartOptions } from "./cart-options";
+import { defaultCartOptions } from "./default-cart-options";
 export class Cart {
-    private static instance: Cart;
-    // private cartModel: CartModel;
-    private cartModelSubject: BehaviorSubject<CartModel>;
-    private cartOptions: CartOptions;
+    public static getInstance(cartOptions?: ICartOptions): Cart {
+        return this.instance || (this.instance = new this(cartOptions));
+    }
+
     private static readonly CART_MODEL_LOCAL_STORAGE_KEY = "mcart-cart-model";
 
-    private constructor(cartOptions?: CartOptions) {
+    private static instance: Cart;
+    // private cartModel: CartModel;
+    private cartModelSubject: BehaviorSubject<ICartModel>;
+    private cartOptions: ICartOptions;
+
+    private constructor(cartOptions?: ICartOptions) {
         if (!isNullOrUndefined(this.cartModelSubject)) {
             return;
         }
@@ -21,118 +25,112 @@ export class Cart {
         this.initializeCart();
     }
 
-    public static getInstance(cartOptions?: CartOptions): Cart {
-        return this.instance || (this.instance = new this(cartOptions));
+    public getCartModelSubject(): BehaviorSubject<ICartModel> {
+        return this.cartModelSubject;
     }
 
-    private initializeCart() {
-        // TODO retrive items from local storage if localSyncingEnabled is enabled
-        let cartModel: CartModel = {
-            cartItems: [],
-            cartItemsTotal: 0,
-            shippingDetails: {
-                shippingCharge: 0
-            },
-            couponDetails: {},
-            taxAmount: 0
-        };
-        if (this.cartOptions.localSyncingEnabled) {
-            let cartModelFromStorage = this.retriveCartModelFromStorage();
-            if (! isNullOrUndefined(cartModelFromStorage)) {
-                cartModel = cartModelFromStorage;
-                this.cartModelSubject = new BehaviorSubject(cartModel);
-                return;
-            }
-        }
-        this.cartModelSubject = new BehaviorSubject(cartModel);
+    public setShippingDetails(shippingDetails) {
+        const cartModel: ICartModel = this.cartModelSubject.getValue();
+        shippingDetails.shippingCharge = this.cartOptions.calculateShippingCharge(shippingDetails);
+        cartModel.shippingDetails = shippingDetails;
         this.upateBehaviourSubjectAndSyncing(cartModel);
     }
 
-    public upateBehaviourSubjectAndSyncing(cartModel: CartModel) {
-        cartModel.taxAmount =  this.cartOptions.calculateTaxAmount(cartModel);
+    public setCouponDetails(couponDetails) {
+        const cartModel: ICartModel = this.cartModelSubject.getValue();
+        cartModel.couponDetails = couponDetails;
+        this.upateBehaviourSubjectAndSyncing(cartModel);
+    }
+
+    public upateBehaviourSubjectAndSyncing(cartModel: ICartModel) {
+        cartModel.taxAmount = this.cartOptions.calculateTaxAmount(cartModel);
         this.cartModelSubject.next(cartModel);
         if (this.cartOptions.localSyncingEnabled) {
             this.saveCartModelIntoStorage(cartModel);
         }
     }
-    public upateBehaviourSubjectWithoutSyncing(cartModel: CartModel) {
-        cartModel.taxAmount =  this.cartOptions.calculateTaxAmount(cartModel);
+
+    public upateBehaviourSubjectWithoutSyncing(cartModel: ICartModel) {
+        cartModel.taxAmount = this.cartOptions.calculateTaxAmount(cartModel);
         this.cartModelSubject.next(cartModel);
     }
 
-    public insertProductToCart(product: Product, count: number = 1) {
-        let cartModel: CartModel = this.cartModelSubject.getValue();
+    public insertProductToCart(product: IProduct, count: number = 1) {
+        const cartModel: ICartModel = this.cartModelSubject.getValue();
         let changeInCartItemsTotal = 0;
         if (isNullOrUndefined(cartModel.cartItems)) {
             this.initializeCart();
         } else {
-            const isItemExist: boolean = cartModel.cartItems.map((value: CartItem, index: number, cartItems: CartItem[]) => {
-                if (value.id === product.id ) {
-                    value.quantity = value.quantity + count;
-                    changeInCartItemsTotal = changeInCartItemsTotal + (value.item.price * count);
-                    return true;
-                }
-                return false;
-            }).reduce(function(pre, cur) {return pre || cur; }, false);
+            const isItemExist: boolean = cartModel.cartItems.map(
+                (value: ICartItem, index: number, cartItems: ICartItem[]) => {
+                    if (value.id === product.id) {
+                        value.quantity = value.quantity + count;
+                        changeInCartItemsTotal = changeInCartItemsTotal + (value.item.price * count);
+                        return true;
+                    }
+                    return false;
+                }).reduce((pre, cur) => pre || cur, false);
             if (isItemExist) {
                 cartModel.cartItemsTotal = cartModel.cartItemsTotal + changeInCartItemsTotal;
                 this.upateBehaviourSubjectAndSyncing(cartModel);
                 return;
             }
         }
-        const cartItem: CartItem = {
+        const cartItem: ICartItem = {
             id: product.id,
             item: product,
-            quantity: count
+            quantity: count,
         };
         cartModel.cartItems.push(cartItem);
         changeInCartItemsTotal = (changeInCartItemsTotal + cartItem.item.price * count);
         cartModel.cartItemsTotal = cartModel.cartItemsTotal + changeInCartItemsTotal;
         this.upateBehaviourSubjectAndSyncing(cartModel);
     }
-    public removeCartItemFromCart(cartItem: CartItem) {
-        let cartModel: CartModel = this.cartModelSubject.getValue();
-        let cartItemsToRemove: CartItem[] = cartModel.cartItems.filter(value => value.id === cartItem.id);
-        cartModel.cartItems = cartModel.cartItems.filter(value => value.id !== cartItem.id);
+
+    public removeCartItemFromCart(cartItem: ICartItem) {
+        const cartModel: ICartModel = this.cartModelSubject.getValue();
+        const cartItemsToRemove: ICartItem[] = cartModel.cartItems.filter((value) => value.id === cartItem.id);
+        cartModel.cartItems = cartModel.cartItems.filter((value) => value.id !== cartItem.id);
         let changeInCartItemsTotal = 0;
-        cartItemsToRemove.forEach((cartItem: CartItem) => {
-            changeInCartItemsTotal = changeInCartItemsTotal - (cartItem.quantity * cartItem.item.price);
+        cartItemsToRemove.forEach((item: ICartItem) => {
+            changeInCartItemsTotal = changeInCartItemsTotal - (item.quantity * item.item.price);
         });
         cartModel.cartItemsTotal = cartModel.cartItemsTotal + changeInCartItemsTotal;
         this.upateBehaviourSubjectAndSyncing(cartModel);
     }
-    public removeProductFromCart(product: Product, count: number = 1) {
+    public removeProductFromCart(product: IProduct, count: number = 1) {
         let changeInCartItemsTotal = 0;
-        let cartModel: CartModel = this.cartModelSubject.getValue();
-        const isItemExist: boolean = cartModel.cartItems.map((value: CartItem, index: number, cartItems: CartItem[]) => {
-            if (value.id === product.id ) {
-                if (value.quantity - count >= 1) {
-                    value.quantity = value.quantity - count;
-                    changeInCartItemsTotal = changeInCartItemsTotal - (value.item.price * count);
-                    return true;
-                } else if (value.quantity - count === 0) {
-                    this.removeCartItemFromCart(value);
-                } else {
-                    throw new RangeError("Invalid number of product requested to remove");
+        const cartModel: ICartModel = this.cartModelSubject.getValue();
+        const isItemExist: boolean = cartModel.cartItems.map(
+            (value: ICartItem, index: number, cartItems: ICartItem[]) => {
+                if (value.id === product.id) {
+                    if (value.quantity - count >= 1) {
+                        value.quantity = value.quantity - count;
+                        changeInCartItemsTotal = changeInCartItemsTotal - (value.item.price * count);
+                        return true;
+                    } else if (value.quantity - count === 0) {
+                        this.removeCartItemFromCart(value);
+                    } else {
+                        throw new RangeError("Invalid number of product requested to remove");
+                    }
                 }
-            }
-            return false;
-        }).reduce(function(pre, cur) {return pre || cur; }, false);
+                return false;
+            }).reduce((pre, cur) => pre || cur, false);
         if (isItemExist) {
             cartModel.cartItemsTotal = cartModel.cartItemsTotal + changeInCartItemsTotal;
             this.upateBehaviourSubjectAndSyncing(cartModel);
             return;
         }
     }
-    private retriveCartModelFromStorage(): CartModel {
+    private retriveCartModelFromStorage(): ICartModel {
         if (this.cartOptions.remoteSyncingEnabled) {
             // try to load all cartItems from server using getCartItems
             // and set it into local storage.
         }
-        let cartModel: CartModel = <CartModel> JSON.parse(localStorage.getItem(Cart.CART_MODEL_LOCAL_STORAGE_KEY));
+        const cartModel: ICartModel = JSON.parse(localStorage.getItem(Cart.CART_MODEL_LOCAL_STORAGE_KEY)) as ICartModel;
         return cartModel;
     }
-    private saveCartModelIntoStorage(cartModel: CartModel) {
+    private saveCartModelIntoStorage(cartModel: ICartModel) {
         if (this.cartOptions.localSyncingEnabled) {
             localStorage.setItem(Cart.CART_MODEL_LOCAL_STORAGE_KEY, JSON.stringify(cartModel));
         }
@@ -141,20 +139,26 @@ export class Cart {
         }
     }
 
-    public getCartModelSubject(): BehaviorSubject<CartModel> {
-        return this.cartModelSubject;
-    }
-
-    public setShippingDetails(shippingDetails) {
-        let cartModel: CartModel = this.cartModelSubject.getValue();
-        shippingDetails.shippingCharge = this.cartOptions.calculateShippingCharge(shippingDetails);
-        cartModel.shippingDetails = shippingDetails;
-        this.upateBehaviourSubjectAndSyncing(cartModel);
-    }
-
-    public setCouponDetails(couponDetails) {
-        let cartModel: CartModel = this.cartModelSubject.getValue();
-        cartModel.couponDetails = couponDetails;
+    private initializeCart() {
+        // TODO retrive items from local storage if localSyncingEnabled is enabled
+        let cartModel: ICartModel = {
+            cartItems: [],
+            cartItemsTotal: 0,
+            couponDetails: {},
+            shippingDetails: {
+                shippingCharge: 0,
+            },
+            taxAmount: 0,
+        };
+        if (this.cartOptions.localSyncingEnabled) {
+            const cartModelFromStorage = this.retriveCartModelFromStorage();
+            if (!isNullOrUndefined(cartModelFromStorage)) {
+                cartModel = cartModelFromStorage;
+                this.cartModelSubject = new BehaviorSubject(cartModel);
+                return;
+            }
+        }
+        this.cartModelSubject = new BehaviorSubject(cartModel);
         this.upateBehaviourSubjectAndSyncing(cartModel);
     }
 }
