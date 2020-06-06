@@ -64,7 +64,9 @@ module.exports = function (env) {
         plugins: [
             // static assets
             new CopyWebpackPlugin([
-                {from: './node_modules/jquery/dist/jquery.js', to: './lib/jquery.js'}
+                {from: './node_modules/jquery/dist/jquery.js', to: './lib/jquery.js'},
+                {from: './src/scripts.js', to: './lib/scripts.js'},
+                {from: './src/style.css', to: './lib/style.css'}
             ]),
 
             // insert bundled script and metadata into index.html
@@ -72,9 +74,21 @@ module.exports = function (env) {
                 template: 'src/index.html',
                 filename: 'index.html',
                 metadata: METADATA
+            }),
+            new HtmlWebpackPlugin({
+                template: 'src/cart.html',
+                filename: 'cart.html',
+                metadata: METADATA
+            }),
+            new HtmlWebpackPlugin({
+                template: 'src/confirmation.html',
+                filename: 'confirmation.html',
+                metadata: METADATA
             })
-        ]
-
+        ],
+        node: {
+            fs: 'empty'
+        }
         // When importing a module whose path matches one of the following, just
         // assume a corresponding global variable exists and use that instead.
         // This is important because it allows us to avoid bundling all of our
