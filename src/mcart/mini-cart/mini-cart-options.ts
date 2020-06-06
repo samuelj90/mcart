@@ -1,5 +1,4 @@
 import { CartItem } from "../cart/cart-item";
-import { Cart } from "../cart";
 
 export interface MiniCartOption {
     renderToElement: JQuery;

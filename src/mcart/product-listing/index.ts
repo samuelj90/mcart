@@ -1,8 +1,6 @@
 import { RenderToElementNotFound } from "../render-to-element-notfound";
 import { Product } from "./product";
 import { ProductListingOption } from "./product-listing-option";
-import { isNullOrUndefined } from "util";
-import { Cart } from "../cart";
 import { defaultProductListingOption } from "./default-product-listing-options";
 import *  as ejs from "ejs";
 export class ProductListing {
