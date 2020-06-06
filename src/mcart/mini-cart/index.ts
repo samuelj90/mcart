@@ -1,10 +1,7 @@
 import { CartModel } from "./../cart/cart-model";
-import { error } from "util";
 import { MiniCartOption } from "./mini-cart-options";
-import { isNullOrUndefined } from "../utils";
 import { Cart } from "../cart";
 import { CartItem } from "../cart/cart-item";
-import { Observable } from "rxjs/Observable";
 import { defaultMiniCartOption } from "./default-mini-cart-option";
 import *  as ejs from "ejs";
 /**

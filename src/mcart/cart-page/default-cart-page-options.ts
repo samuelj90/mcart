@@ -1,16 +1,13 @@
 import { states } from "./../shared/states";
 import { countries } from "./../shared/countries";
-import { isNullOrUndefined } from "util";
 import { cartPageTemplate } from "./cart-page-template";
 import { CartPageOptions } from "./cart-page-options";
 import { Cart } from "../cart";
 import { CartItem } from "../cart/cart-item";
 import { Product } from "../product-listing/product";
 import { Order } from "../order";
-import { OrderStatus } from "../order/order-status";
 import *  as ejs from "ejs";
 import { selectOptionTemplate } from "./select-options-template";
-import { OrderModel } from "../order/order-model";
 
 declare let window: any;
 
@@ -73,10 +70,10 @@ export const defaultCartPageOptions: CartPageOptions = {
             let selectedState = $(this).find("options:selected").data("selectedoption");
          });
     },
-    onCartFormSubmit: function (Cart:Cart, Order:Order, cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) {
+    onCartFormSubmit: function (Cart: Cart, Order: Order, cartPageOptions: CartPageOptions, event: JQueryEventObject, $this: JQuery) {
         let cartModel = Cart.getCartModelSubject().value;
         let cartItems = cartModel.cartItems.map(function(cartItem) { return {id: cartItem.item.id, quantity: cartItem.quantity}; });
-        if(cartItems.length <= 0) {
+        if (cartItems.length <= 0) {
             cartModel.errors = ["Cart items cannot be empty"];
             Cart.upateBehaviourSubjectWithoutSyncing(cartModel);
             return;
@@ -98,17 +95,17 @@ export const defaultCartPageOptions: CartPageOptions = {
         });
     },
     cartItemIncrementerElement: ".mcart-cartpage-cartitem-incrementer",
-    onCartItemIncrementerElementClicked: function (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
+    onCartItemIncrementerElementClicked: function (Cart: Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
         let product: Product = cartItem.item;
         Cart.insertProductToCart(product, 1);
     },
     cartItemDecrementerElement: ".mcart-cartpage-cartitem-decrementer",
-    onCartItemDecrementerElementClicked: function (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
+    onCartItemDecrementerElementClicked: function (Cart: Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
         let product: Product = cartItem.item;
         Cart.removeProductFromCart(product, 1);
     },
     cartItemRemoveElement: ".mcart-cartpage-cartitem-remove",
-    onCartItemRemoveElementClicked: function (Cart:Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
+    onCartItemRemoveElementClicked: function (Cart: Cart, cartPageOptions: CartPageOptions, cartItem: CartItem, event: JQueryEventObject, $this: JQuery) {
         Cart.removeCartItemFromCart(cartItem);
     }
 };
