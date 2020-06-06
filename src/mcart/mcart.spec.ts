@@ -5,11 +5,6 @@ describe("MCartPlugin", () => {
 
    beforeEach(() => {
       rootElement = jQuery("<div>some content</div>");
-      let myPlugin: MCart = new MCart(rootElement, {label: "My label"});
-   });
-
-   it("should render label after initialization", () => {
-      expect(rootElement.text()).toBe("My label");
    });
 
    it("should throw error for options is null", () => {
