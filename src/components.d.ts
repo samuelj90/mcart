@@ -5,7 +5,14 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { IProduct, } from "./components/products/models/product";
 export namespace Components {
+    interface McProductCard {
+        /**
+          * The product
+         */
+        "product": IProduct;
+    }
     interface MyComponent {
         /**
           * The first name
@@ -22,6 +29,12 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLMcProductCardElement extends Components.McProductCard, HTMLStencilElement {
+    }
+    var HTMLMcProductCardElement: {
+        prototype: HTMLMcProductCardElement;
+        new (): HTMLMcProductCardElement;
+    };
     interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {
     }
     var HTMLMyComponentElement: {
@@ -29,10 +42,17 @@ declare global {
         new (): HTMLMyComponentElement;
     };
     interface HTMLElementTagNameMap {
+        "mc-product-card": HTMLMcProductCardElement;
         "my-component": HTMLMyComponentElement;
     }
 }
 declare namespace LocalJSX {
+    interface McProductCard {
+        /**
+          * The product
+         */
+        "product"?: IProduct;
+    }
     interface MyComponent {
         /**
           * The first name
@@ -48,6 +68,7 @@ declare namespace LocalJSX {
         "middle"?: string;
     }
     interface IntrinsicElements {
+        "mc-product-card": McProductCard;
         "my-component": MyComponent;
     }
 }
@@ -55,6 +76,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "mc-product-card": LocalJSX.McProductCard & JSXBase.HTMLAttributes<HTMLMcProductCardElement>;
             "my-component": LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
         }
     }
